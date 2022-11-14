@@ -1,6 +1,6 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
 import { ortho, lookAt, flatten } from "../../libs/MV.js";
-import {modelView, loadMatrix, multRotationY, multScale } from "../../libs/stack.js";
+import {modelView, loadMatrix, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
 
@@ -34,11 +34,11 @@ const EARTH_YEAR = 365.26;
 const EARTH_DAY = 0.99726968;
 
 const MOON_DIAMETER = 3474*PLANET_SCALE;
-const MOON_ORBIT = 363396*ORBIT_SCALE;
+const MOON_ORBIT = 363396*ORBIT_SCALE*60;
 const MOON_YEAR = 28;
 const MOON_DAY = 0;
 
-const VP_DISTANCE = EARTH_ORBIT;
+const VP_DISTANCE = 50; //antes estava EARTH_ORBIT
 
 
 
@@ -101,7 +101,43 @@ function setup(shaders)
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mModelView"), false, flatten(modelView()));
     }
 
-    function Sun()
+    function setColor(color) {
+        //getUniformLocation
+        //gl.uniform3f ou 3fv
+    }
+
+    function HelicopterBody()
+    {
+        // Don't forget to scale the sun, rotate it around the y axis at the correct speed
+        
+        multScale([25*2, 25, 25]);
+        multRotationY(360*time/SUN_DAY);
+       
+        
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        // Draw a sphere representing the sun
+        SPHERE.draw(gl, program, mode);
+       
+    }
+
+    function HelicopterTail1() {
+        // Don't forget to scale the sun, rotate it around the y axis at the correct speed
+
+        multTranslation([25*2, 0, 0]);
+        
+        multScale([25*2, 12.5, 12.5]);      
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        // Draw a sphere representing the sun
+        SPHERE.draw(gl, program, mode);
+      
+    }
+
+    /*function Sun()
     {
         // Don't forget to scale the sun, rotate it around the y axis at the correct speed
         multScale([SUN_DIAMETER, SUN_DIAMETER, SUN_DIAMETER]);
@@ -113,6 +149,66 @@ function setup(shaders)
         // Draw a sphere representing the sun
         SPHERE.draw(gl, program, mode);
     }
+
+    function Mercury()
+    {
+        multScale([MERCURY_DIAMETER, MERCURY_DIAMETER, MERCURY_DIAMETER]);
+        multRotationY(360*time/MERCURY_DAY);
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        // Draw a sphere 
+        SPHERE.draw(gl, program, mode);
+    }
+
+    function Venus()
+    {
+        multScale([VENUS_DIAMETER, VENUS_DIAMETER, VENUS_DIAMETER]);
+        multRotationY(360*time/VENUS_DAY);
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        // Draw a sphere 
+        SPHERE.draw(gl, program, mode);
+    }
+
+    function Earth()
+    {
+        multRotationY(360*time/EARTH_DAY);
+        multScale([EARTH_DIAMETER, EARTH_DIAMETER, EARTH_DIAMETER]);
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        // Draw a sphere 
+        SPHERE.draw(gl, program, mode);
+    }
+
+    function Moon()
+    {
+        multScale([MOON_DIAMETER, MOON_DIAMETER, MOON_DIAMETER])
+
+        // Send the current modelview matrix to the vertex shader
+        uploadModelView();
+
+        // Draw a sphere 
+        SPHERE.draw(gl, program, mode);
+    }
+
+    function EarthAndMoon() 
+    {
+        pushMatrix();
+        Earth();
+        popMatrix();
+        pushMatrix();
+            multRotationY(360*time/MOON_YEAR);
+            multTranslation([MOON_ORBIT, 0, 0]);
+            Moon();
+        popMatrix();
+    }*/
+
 
     function render()
     {
@@ -127,7 +223,38 @@ function setup(shaders)
     
         loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
-        Sun();
+        //translaçao e rotaçao do helicoptero para fazer aqui
+        pushMatrix();
+        HelicopterBody();
+        popMatrix();
+        pushMatrix();
+        HelicopterTail1();
+        popMatrix();
+        pushMatrix();
+        
+        popMatrix();
+        /*
+        pushMatrix();
+            Sun();
+        popMatrix();
+        pushMatrix();
+            multRotationY(360*time/MERCURY_YEAR);
+            multTranslation([MERCURY_ORBIT, 0, 0]);
+            Mercury();
+        popMatrix();
+        pushMatrix();
+            multRotationY(360*time/VENUS_YEAR);
+            multTranslation([VENUS_ORBIT, 0, 0]);
+            Venus();
+        popMatrix();
+        pushMatrix();
+            multRotationY(360*time/EARTH_YEAR);
+            multTranslation([EARTH_ORBIT, 0, 0]);
+            EarthAndMoon();
+        popMatrix();
+        */
+   
+
     }
 }
 
