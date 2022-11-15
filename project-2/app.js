@@ -168,6 +168,7 @@ function setup(shaders)
          SPHERE.draw(gl, program, mode);
         
     }
+    function helixHolder(){}
 
     /*function Sun()
     {
