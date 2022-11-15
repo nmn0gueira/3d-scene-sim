@@ -3,6 +3,9 @@ import { ortho, lookAt, flatten } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
+import * as CUBE from '../../libs/objects/cube.js'
+import * as CYLINDER from '../../libs/objects/cylinder.js'
+
 
 /** @type WebGLRenderingContext */
 let gl;
@@ -80,6 +83,8 @@ function setup(shaders)
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     SPHERE.init(gl);
+    CUBE.init(gl);
+    CYLINDER.init(gl);
     gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
     
     window.requestAnimationFrame(render);
@@ -106,12 +111,17 @@ function setup(shaders)
         //gl.uniform3f ou 3fv
     }
 
-    function HelicopterBody()
+    function helicopterBody()
     {
         // Don't forget to scale the sun, rotate it around the y axis at the correct speed
         
         multScale([25*2, 25, 25]);
-        multRotationY(360*time/SUN_DAY);
+        //multRotationY(360*time/SUN_DAY);
+
+        gl.useProgram(program);
+        const uColor = gl.getUniformLocation(program, "uColor");
+
+        gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
        
         
         // Send the current modelview matrix to the vertex shader
@@ -122,12 +132,17 @@ function setup(shaders)
        
     }
 
-    function HelicopterTail1() {
+    function helicopterTail1() {
         // Don't forget to scale the sun, rotate it around the y axis at the correct speed
 
-        multTranslation([25*2, 0, 0]);
         
-        multScale([25*2, 12.5, 12.5]);      
+        
+        multScale([25*2, 25/4, 25/2]);     
+        
+        gl.useProgram(program);
+        const uColor = gl.getUniformLocation(program, "uColor");
+
+        gl.uniform4f(uColor, 0.0, 1.0, 0.0, 1.0); // Red
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
@@ -135,6 +150,23 @@ function setup(shaders)
         // Draw a sphere representing the sun
         SPHERE.draw(gl, program, mode);
       
+    }
+
+    function helicopterTail2() {
+
+         multScale([25, 25/2, 25/2]);      
+
+         gl.useProgram(program);
+         const uColor = gl.getUniformLocation(program, "uColor");
+ 
+         gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
+
+         // Send the current modelview matrix to the vertex shader
+         uploadModelView();
+ 
+         // Draw a sphere representing the sun
+         SPHERE.draw(gl, program, mode);
+        
     }
 
     /*function Sun()
@@ -225,14 +257,23 @@ function setup(shaders)
 
         //translaçao e rotaçao do helicoptero para fazer aqui
         pushMatrix();
-        HelicopterBody();
+        helicopterBody();
         popMatrix();
         pushMatrix();
-        HelicopterTail1();
+            multTranslation([35, 25/2, 25/4]); // 35?
+            pushMatrix();
+                helicopterTail1();
+            popMatrix();
+            pushMatrix();
+                multTranslation([21, 13, 25/4]);
+                multRotationY(70);
+                
+                pushMatrix();
+                    helicopterTail2();
+                popMatrix();
+            popMatrix();
         popMatrix();
-        pushMatrix();
-        
-        popMatrix();
+      
         /*
         pushMatrix();
             Sun();
