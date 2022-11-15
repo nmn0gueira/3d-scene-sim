@@ -169,6 +169,7 @@ function setup(shaders)
         
     }
     function helixHolder(){}
+    function mainHelix(){}
 
     /*function Sun()
     {
