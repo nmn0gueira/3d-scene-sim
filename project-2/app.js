@@ -1,6 +1,6 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
 import { ortho, lookAt, flatten } from "../../libs/MV.js";
-import {modelView, loadMatrix, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
+import {modelView, loadMatrix,multRotationX, multRotationZ, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CUBE from '../../libs/objects/cube.js'
@@ -169,7 +169,7 @@ function setup(shaders)
         
     }
     function helixHolder(){
-multScale([3,10,5]);
+multScale([2,10,2]);
 gl.useProgram(program);
          const uColor = gl.getUniformLocation(program, "uColor");
  
@@ -318,11 +318,11 @@ gl.useProgram(program);
           CUBE.draw(gl, program, mode);
         }
     function skidLanding1(){
-        multScale([3,10,5]);
+        multScale([3,50,3]);
 gl.useProgram(program);
          const uColor = gl.getUniformLocation(program, "uColor");
  
-         gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
+         gl.uniform4f(uColor, 0.0, 1.0, 1.0, 1.0); // Red
 
 
          uploadModelView();
@@ -331,11 +331,11 @@ gl.useProgram(program);
 
     }
     function skidLanding2(){
-        multScale([3,10,5]);
+        multScale([3,50,3]);
 gl.useProgram(program);
          const uColor = gl.getUniformLocation(program, "uColor");
  
-         gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
+         gl.uniform4f(uColor, 0.5, 0.0, 0.5, 1.0); // Red
 
 
          uploadModelView();
@@ -449,8 +449,24 @@ gl.useProgram(program);
                popMatrix();
            popMatrix();
 
-        //skid part
+        //skid part verificar se esta certo
         pushMatrix();
+        multTranslation([0,-50,-12]);
+        multRotationZ(90);
+        
+         pushMatrix();
+        skidLanding1();
+         popMatrix();
+        popMatrix();
+        
+       pushMatrix();
+       multTranslation([0,-50,12]);
+        multRotationZ(90);
+         pushMatrix();
+        skidLanding2();
+         popMatrix();
+        popMatrix();
+        
 
 
 
