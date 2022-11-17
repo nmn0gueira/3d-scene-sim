@@ -1,6 +1,6 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
 import { ortho, lookAt, flatten } from "../../libs/MV.js";
-import {modelView, loadMatrix, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
+import {modelView, loadMatrix,multRotationX, multRotationZ, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CUBE from '../../libs/objects/cube.js'
@@ -137,7 +137,7 @@ function setup(shaders)
 
         
         
-        multScale([25*2, 25/4, 25/2]);     
+        multScale([50, 25/4, 25/2]);     
         
         gl.useProgram(program);
         const uColor = gl.getUniformLocation(program, "uColor");
@@ -168,10 +168,187 @@ function setup(shaders)
          SPHERE.draw(gl, program, mode);
         
     }
+    function helixHolder(){
+multScale([2,10,2]);
+gl.useProgram(program);
+         const uColor = gl.getUniformLocation(program, "uColor");
+ 
+         gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
+
+
+         uploadModelView();
+
+         CYLINDER.draw(gl, program, mode);
+
+    }
+
+
+
+    function mainHelix1(){
+          // Don't forget to scale the sun, rotate it around the y axis at the correct speed
+        
+          multScale([50, 5, 7]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          SPHERE.draw(gl, program, mode);
+    }
+    function mainHelix2(){
+        multScale([50, 5, 7]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          SPHERE.draw(gl, program, mode);
+    }
+    function mainHelix3(){
+        multScale([50, 5, 7]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          SPHERE.draw(gl, program, mode);
+    }
+
+    function tailHolder(){
+        multScale([3,10,5]);
+gl.useProgram(program);
+         const uColor = gl.getUniformLocation(program, "uColor");
+ 
+         gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
+
+
+         uploadModelView();
+
+         CYLINDER.draw(gl, program, mode);
+    }
+    function tailHelix1(){}
+    function tailhelix2(){}
+
+    function skidLandingHolder1(){
+        multScale([25*2, 25, 10]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          CUBE.draw(gl, program, mode);
+    }
+
+    function skidLandingHolder2(){
+        multScale([25*2, 25, 10]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          CUBE.draw(gl, program, mode);
+    }  
+
+    function skidLandingHolder3(){
+        multScale([25*2, 25, 10]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          CUBE.draw(gl, program, mode);
+    }   
+
+    function skidLandingHolder4(){
+        multScale([25*2, 25, 10]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          CUBE.draw(gl, program, mode);
+        }
+    function skidLanding1(){
+        multScale([3,50,3]);
+gl.useProgram(program);
+         const uColor = gl.getUniformLocation(program, "uColor");
+ 
+         gl.uniform4f(uColor, 0.0, 1.0, 1.0, 1.0); // Red
+
+
+         uploadModelView();
+
+         CYLINDER.draw(gl, program, mode);
+
+    }
+    function skidLanding2(){
+        multScale([3,50,3]);
+gl.useProgram(program);
+         const uColor = gl.getUniformLocation(program, "uColor");
+ 
+         gl.uniform4f(uColor, 0.5, 0.0, 0.5, 1.0); // Red
+
+
+         uploadModelView();
+
+         CYLINDER.draw(gl, program, mode);
+
+    }
+    
+
 
     /*function Sun()
     {
-        // Don't forget to scale the sun, rotate it around the y axis at the correct speed
+        // Don't forget to scale the sun, romctate it around the y axis at the correct speed
         multScale([SUN_DIAMETER, SUN_DIAMETER, SUN_DIAMETER]);
         multRotationY(360*time/SUN_DAY);
 
@@ -259,6 +436,41 @@ function setup(shaders)
         pushMatrix();
         helicopterBody();
         popMatrix();
+        //main helix
+           pushMatrix();
+              multTranslation([0,25/2,0]);
+              pushMatrix();
+              helixHolder();
+              popMatrix();
+               pushMatrix();
+               //falta rotacao e as outras helices
+               multTranslation([-50/3,25/4,0]);
+               mainHelix1();
+               popMatrix();
+           popMatrix();
+
+        //skid part verificar se esta certo
+        pushMatrix();
+        multTranslation([0,-50,-12]);
+        multRotationZ(90);
+        
+         pushMatrix();
+        skidLanding1();
+         popMatrix();
+        popMatrix();
+        
+       pushMatrix();
+       multTranslation([0,-50,12]);
+        multRotationZ(90);
+         pushMatrix();
+        skidLanding2();
+         popMatrix();
+        popMatrix();
+        
+
+
+
+//tail
         pushMatrix();
             multTranslation([35, 25/2, 25/4]); // 35?
             pushMatrix();
@@ -273,6 +485,8 @@ function setup(shaders)
                 popMatrix();
             popMatrix();
         popMatrix();
+
+
       
         /*
         pushMatrix();
