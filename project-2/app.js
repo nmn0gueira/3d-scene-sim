@@ -137,7 +137,7 @@ function setup(shaders)
 
         
         
-        multScale([25*2, 25/4, 25/2]);     
+        multScale([50, 25/4, 25/2]);     
         
         gl.useProgram(program);
         const uColor = gl.getUniformLocation(program, "uColor");
@@ -168,12 +168,57 @@ function setup(shaders)
          SPHERE.draw(gl, program, mode);
         
     }
-    function helixHolder(){}
-    function mainHelix(){}
+    function helixHolder(){
+multScale([3,10,5]);
+gl.useProgram(program);
+         const uColor = gl.getUniformLocation(program, "uColor");
+ 
+         gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
+
+
+         uploadModelView();
+
+         CYLINDER.draw(gl, program, mode);
+
+    }
+
+
+
+    function mainHelix1(){
+          // Don't forget to scale the sun, rotate it around the y axis at the correct speed
+        
+          multScale([25*2, 25, 10]);
+          //multRotationY(360*time/SUN_DAY);
+  
+          gl.useProgram(program);
+          const uColor = gl.getUniformLocation(program, "uColor");
+  
+          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
+         
+          
+          // Send the current modelview matrix to the vertex shader
+          uploadModelView();
+  
+          // Draw a sphere representing the sun
+          SPHERE.draw(gl, program, mode);
+    }
+    function mainHelix2(){}
+    function mainHelix3(){}
+    function tailHolder(){}
+    function tailHelix1(){}
+    function tailhelix2(){}
+    function skidLandingHolder1(){}
+    function skidLandingHolder2(){}  
+    function skidLandingHolder3(){}   
+    function skidLandingHolder4(){}
+    function skidLanding1(){}
+    function skidLanding2(){}
+    
+
 
     /*function Sun()
     {
-        // Don't forget to scale the sun, rotate it around the y axis at the correct speed
+        // Don't forget to scale the sun, romctate it around the y axis at the correct speed
         multScale([SUN_DIAMETER, SUN_DIAMETER, SUN_DIAMETER]);
         multRotationY(360*time/SUN_DAY);
 
@@ -261,6 +306,16 @@ function setup(shaders)
         pushMatrix();
         helicopterBody();
         popMatrix();
+        //main helix
+           pushMatrix();
+           multTranslation([0,25/2,0]);
+           pushMatrix();
+           helixHolder();
+           popMatrix();
+           pushMatrix();
+           mainHelix1();
+           popMatrix();
+           popMatrix();
         pushMatrix();
             multTranslation([35, 25/2, 25/4]); // 35?
             pushMatrix();
@@ -275,6 +330,8 @@ function setup(shaders)
                 popMatrix();
             popMatrix();
         popMatrix();
+
+
       
         /*
         pushMatrix();
