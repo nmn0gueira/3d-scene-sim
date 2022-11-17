@@ -470,7 +470,7 @@ gl.useProgram(program);
 
 
 
-
+//tail
         pushMatrix();
             multTranslation([35, 25/2, 25/4]); // 35?
             pushMatrix();
