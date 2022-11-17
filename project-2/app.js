@@ -235,7 +235,18 @@ gl.useProgram(program);
           SPHERE.draw(gl, program, mode);
     }
 
-    function tailHolder(){}
+    function tailHolder(){
+        multScale([3,10,5]);
+gl.useProgram(program);
+         const uColor = gl.getUniformLocation(program, "uColor");
+ 
+         gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
+
+
+         uploadModelView();
+
+         CYLINDER.draw(gl, program, mode);
+    }
     function tailHelix1(){}
     function tailhelix2(){}
 
