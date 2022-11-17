@@ -53,8 +53,8 @@ function setup(shaders) {
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
-    let mProjection = ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
-    let mView= lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]);
+    let mProjection = ortho(-VP_DISTANCE * aspect, VP_DISTANCE * aspect, -VP_DISTANCE, VP_DISTANCE, -3 * VP_DISTANCE, 3 * VP_DISTANCE);
+    let mView = lookAt([0, VP_DISTANCE, VP_DISTANCE], [0, 0, 0], [0, 1, 0]);
 
     mode = gl.LINES;
 
@@ -78,21 +78,21 @@ function setup(shaders) {
             case '-':
                 if (animation) speed /= 1.1;
                 break;
-            case'2':
-            //frente
-                mView =   lookAt([-1, -0.6, 0.], [0, -0.6, 0], [0, 1, 0]);
+            case '2':
+                //frente
+                mView = lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0]);
                 break;
             case '3':
                 //cima
-                mView= lookAt([0,1.6,0],  [0,0.6,0], [0,0,-1]);
+                mView = lookAt([0, 1, 0], [0, 0, 0], [0, 0, -1]);
                 break;
             case '4':
                 //lado direito , nest momento esta a nostrar a parte de tras
-                mView= lookAt([0,0.6,1], [0,0.6,0], [0,1,0]); 
+                mView = lookAt([0, 0, 1], [0, 0, 0], [0, 1, 0]);
                 break;
             case 'k':
                 //regressa ao normal, nao e para o trabalho, so para ajudar
-                mView= lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]);
+                mView = lookAt([0, VP_DISTANCE, VP_DISTANCE], [0, 0, 0], [0, 1, 0]);
                 break;
 
         }
@@ -113,8 +113,8 @@ function setup(shaders) {
 
         aspect = canvas.width / canvas.height;
 
-        gl.viewport(0,0,canvas.width, canvas.height);
-        mProjection =ortho(-VP_DISTANCE*aspect,VP_DISTANCE*aspect, -VP_DISTANCE, VP_DISTANCE,-3*VP_DISTANCE,3*VP_DISTANCE);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        mProjection = ortho(-VP_DISTANCE * aspect, VP_DISTANCE * aspect, -VP_DISTANCE, VP_DISTANCE, -3 * VP_DISTANCE, 3 * VP_DISTANCE);
     }
 
     function uploadModelView() {
@@ -122,19 +122,19 @@ function setup(shaders) {
     }
 
     function setColor(color) {
-        //getUniformLocation
-        //gl.uniform3f ou 3fv
+        gl.useProgram(program);
+
+        const uColor = gl.getUniformLocation(program, "uColor");
+
+        gl.uniform4fv(uColor, color);
     }
 
-    function helicopterBody() {
+    function buildBody() {
 
         multScale([20, 10, 10]);
 
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
-
+        let color = [1.0,0.0,0.0,1.0];  //Red
+        setColor(color); 
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
@@ -144,15 +144,87 @@ function setup(shaders) {
 
     }
 
+    function buildTail() {
+        multTranslation([15, 2, 0]); // 15 = 3xBody/4, 2 = yBody/5
+        pushMatrix();
+            helicopterTail1();
+        popMatrix();
+        pushMatrix();
+            multTranslation([12.5, 5, 0]); // 12.5 = xTail1/2, 10 = yTail1*2
+            multRotationZ(70);  // tail2 rotation 
+            pushMatrix();
+                helicopterTail2();
+            popMatrix();
+            pushMatrix();
+                buildTailRotorSystem();
+            popMatrix();
+        popMatrix();
+    }
+
+    function buildUpperRotor() {
+        multTranslation([0, 5, 0]); // 5 = yBody/2 
+        pushMatrix();
+            helixHolder();
+        popMatrix();
+        multRotationY(time * 360 * 2);
+        pushMatrix();
+            multTranslation([10, 5 / 4, 0]); //10 = xBody/2, y = yHelixHolder/4
+            mainHelix();
+        popMatrix();
+        pushMatrix();
+            multRotationY(120);    
+            multTranslation([10, 5 / 4, 0]);
+            mainHelix();
+        popMatrix();
+        pushMatrix();
+            multRotationY(240);
+            multTranslation([10, 5 / 4, 0]);
+            mainHelix();
+        popMatrix();
+    }
+
+    function buildLowerBody() {
+        pushMatrix();    
+            multTranslation([-6, -5, 4]);   //-6 = -(3xBody/10), -5 = -(yBody/2), 4 = (2zBody/5)
+            multRotationX(150); 
+            multRotationZ(15); 
+            supportLeg();
+        popMatrix();
+        pushMatrix();
+            multTranslation([6,-5,4]);      //6 = (3xBody/10), -5 = -(yBody/2), 4 = (2zBody/5)
+            multRotationX(150);
+            multRotationZ(-15); 
+            supportLeg();
+        popMatrix();
+        pushMatrix();
+            multTranslation([6,-5,-4]);     //6 = (3xBody/10), -5 = -(yBody/2), -4 = -(2zBody/5)
+            multRotationX(-150);
+            multRotationZ(-15); 
+            supportLeg();
+        popMatrix();
+        pushMatrix();
+            multTranslation([-6,-5,-4]);    //-6 = -(3xBody/10), -5 = -(yBody/2), -4 = -(2zBody/5)
+            multRotationX(-150);
+            multRotationZ(15); 
+            supportLeg();
+        popMatrix();
+
+        pushMatrix();
+            multTranslation([0,-7.5,5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
+            multRotationX(90);
+            landingGear();
+        popMatrix();
+
+        pushMatrix();
+            multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
+            multRotationX(90);
+            landingGear();
+        popMatrix();
+    }
+
     function helicopterTail1() {
 
         multScale([25, 5, 5]);  // 25 = xBody+xBody/4, 5 = yBody/2, 5 = zBody/2
-
-
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 0.0, 1.0, 0.0, 1.0); // Red
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
@@ -166,11 +238,6 @@ function setup(shaders) {
 
         multScale([12.5, 5, 5]);  //12.5 = xTail1/2, 5 = yTail1, 5 = zTail1
 
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 0.0, 0.0, 1.0, 1.0); // Red
-
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
@@ -178,254 +245,101 @@ function setup(shaders) {
         SPHERE.draw(gl, program, mode);
 
     }
+
+    function buildTailRotorSystem() {
+        multRotationX(90);
+        pushMatrix();//
+            helixHolder();
+        popMatrix(); //
+        pushMatrix(); // pode se retirar acho
+            multRotationY(time * 360 * 2); // two cycles per second
+            pushMatrix();
+                multTranslation([4, 2.5, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2
+                tailHelix();
+            popMatrix();
+            pushMatrix();
+                multTranslation([-4, 2.5, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2
+                tailHelix();
+            popMatrix();
+        popMatrix(); // pode se retirar acho
+    }
+
     function helixHolder() {
-        multScale([2, 10, 2]);
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
+        multScale([2, 5, 2]);
 
-        gl.uniform4f(uColor, 0.0, 1.0, 0.0, 1.0); // Red
-
-
-        uploadModelView();
-
-        CYLINDER.draw(gl, program, mode);
-
-    }
-
-
-
-    function mainHelix1() {
-        // Don't forget to scale the sun, rotate it around the y axis at the correct speed
-
-        multScale([50, 5, 7]);
-        //multRotationY(360*time/SUN_DAY);
-
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
-
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere representing the sun
-        SPHERE.draw(gl, program, mode);
-    }
-    function mainHelix2() {
-        multScale([50, 5, 7]);
-        //multRotationY(360*time/SUN_DAY);
-
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
-
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere representing the sun
-        SPHERE.draw(gl, program, mode);
-    }
-    function mainHelix3() {
-        multScale([50, 5, 7]);
-        //multRotationY(360*time/SUN_DAY);
-
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
-
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere representing the sun
-        SPHERE.draw(gl, program, mode);
-    }
-
-    function tailHelixHolder() {
-        multScale([3, 8, 3]);
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
-
+        let color = [1.0,1.0,0.0,1.0]; // Amarelo
+        setColor(color); 
 
         uploadModelView();
 
         CYLINDER.draw(gl, program, mode);
     }
 
-    function tailHelix1(){}
-    function tailhelix2(){}
+    function tailHelix() {
+        multScale([12.5/2, 1, 2.5]);  //12.5 = xTail2/2, 1 = yTail2/5, 2.5 = zTail2/2
 
-    function skidLandingHolder1(){
-        multScale([2, 25, 2]);
-          multRotationY(360*time/SUN_DAY);
-  
-          gl.useProgram(program);
-          const uColor = gl.getUniformLocation(program, "uColor");
-  
-          gl.uniform4f(uColor, 1.0, 0.0, 1.0, 1.0); // Red
-         
-          
-          // Send the current modelview matrix to the vertex shader
-          uploadModelView();
-  
-          // Draw a sphere representing the sun
-          CUBE.draw(gl, program, mode);
-    }
-
-    function skidLandingHolder2(){
-        multScale([2, 25, 2]);
-          //multRotationY(360*time/SUN_DAY);
-  
-          gl.useProgram(program);
-          const uColor = gl.getUniformLocation(program, "uColor");
-  
-          gl.uniform4f(uColor, 1.0, 0.0, 0.0, 1.0); // Red
-         
-          
-          // Send the current modelview matrix to the vertex shader
-          uploadModelView();
-  
-          // Draw a sphere representing the sun
-          CUBE.draw(gl, program, mode);
-    }  
-
-    function skidLandingHolder3(){
-        multScale([2, 25, 2]);
-          //multRotationY(360*time/SUN_DAY);
-  
-          gl.useProgram(program);
-          const uColor = gl.getUniformLocation(program, "uColor");
-  
-          gl.uniform4f(uColor, 1.0, 0.0, 0.5, 1.0); // Red
-         
-          
-          // Send the current modelview matrix to the vertex shader
-          uploadModelView();
-  
-          // Draw a sphere representing the sun
-          CUBE.draw(gl, program, mode);
-    }   
-
-    function skidLandingHolder4(){
-      multScale([2, 25, 2]);
-      //multRotationY(360*time/SUN_DAY);
-
-      gl.useProgram(program);
-      const uColor = gl.getUniformLocation(program, "uColor");
-
-      gl.uniform4f(uColor, 1.0, 1.0, 0.5, 1.0); // Red
-
-      // Send the current modelview matrix to the vertex shader
-      uploadModelView();
-
-      // Draw a sphere representing the sun
-      CUBE.draw(gl, program, mode);
-    }
-    function skidLanding1(){
-        multScale([3,50,3]);
-gl.useProgram(program);
-         const uColor = gl.getUniformLocation(program, "uColor");
- 
-         gl.uniform4f(uColor, 0.0, 1.0, 1.0, 1.0); // Red
+        let color = [0.0,0.0,1.0,1.0]; // Azul
+        setColor(color);
 
         uploadModelView();
 
-        CYLINDER.draw(gl, program, mode);
+        SPHERE.draw(gl, program, mode);
+     }
+     
+     function mainHelix() {
+        multScale([25, 1, 2.5]); // 25 = xTailHelix*2, 5 = yTailHelix, 2.5 = zTailHelix
 
-    }
-    function skidLanding2() {
-        multScale([3, 50, 3]);
-        gl.useProgram(program);
-        const uColor = gl.getUniformLocation(program, "uColor");
-
-        gl.uniform4f(uColor, 0.5, 0.0, 0.5, 1.0); // Red
-
+        let color = [0.0,0.0,1.0,0.0];  //Blue
+        setColor(color);    
 
         uploadModelView();
 
-        CYLINDER.draw(gl, program, mode);
-
+        SPHERE.draw(gl, program, mode);
     }
 
+    function supportLeg() {
+        multScale([2, 5, 2]);  // metricas do helixHolder
 
-
-    /*function Sun()
-    {
-        // Don't forget to scale the sun, romctate it around the y axis at the correct speed
-        multScale([SUN_DIAMETER, SUN_DIAMETER, SUN_DIAMETER]);
-        multRotationY(360*time/SUN_DAY);
+        let color = [0.2,0.2,0.2,1.0];
+        setColor(color);
 
         // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
         // Draw a sphere representing the sun
-        SPHERE.draw(gl, program, mode);
+        CUBE.draw(gl, program, mode);
     }
 
-    function Mercury()
-    {
-        multScale([MERCURY_DIAMETER, MERCURY_DIAMETER, MERCURY_DIAMETER]);
-        multRotationY(360*time/MERCURY_DAY);
+    function landingGear() {
+        multScale([20.0, 2.5, 2.5]);
 
-        // Send the current modelview matrix to the vertex shader
+        let color = [1.0,1.0,0.0,1.0]; // Amarelo
+        
+        setColor(color);
+
         uploadModelView();
 
-        // Draw a sphere 
-        SPHERE.draw(gl, program, mode);
+        CYLINDER.draw(gl, program, mode);
     }
 
-    function Venus()
-    {
-        multScale([VENUS_DIAMETER, VENUS_DIAMETER, VENUS_DIAMETER]);
-        multRotationY(360*time/VENUS_DAY);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere 
-        SPHERE.draw(gl, program, mode);
-    }
-
-    function Earth()
-    {
-        multRotationY(360*time/EARTH_DAY);
-        multScale([EARTH_DIAMETER, EARTH_DIAMETER, EARTH_DIAMETER]);
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere 
-        SPHERE.draw(gl, program, mode);
-    }
-
-    function Moon()
-    {
-        multScale([MOON_DIAMETER, MOON_DIAMETER, MOON_DIAMETER])
-
-        // Send the current modelview matrix to the vertex shader
-        uploadModelView();
-
-        // Draw a sphere 
-        SPHERE.draw(gl, program, mode);
-    }
-
-    function EarthAndMoon() 
-    {
+    function buildHelicopter() {
         pushMatrix();
-        Earth();
+            buildBody();
         popMatrix();
+
         pushMatrix();
-            multRotationY(360*time/MOON_YEAR);
-            multTranslation([MOON_ORBIT, 0, 0]);
-            Moon();
+            buildTail();
         popMatrix();
-    }*/
+
+        pushMatrix();
+            buildUpperRotor();
+        popMatrix();
+
+        pushMatrix();
+            buildLowerBody();
+        popMatrix();
+
+    }
 
 
     function render() {
@@ -437,113 +351,14 @@ gl.useProgram(program);
         gl.useProgram(program);
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
-    
-        loadMatrix(lookAt([0,VP_DISTANCE,VP_DISTANCE], [0,0,0], [0,1,0]));
 
-        //translaçao e rotaçao do helicoptero para fazer aqui
-        pushMatrix();
-            helicopterBody();
-        popMatrix();
+        loadMatrix(mView);
 
-        
-        
-         pushMatrix();
-           multTranslation([-20,-20,-20]);
-           skidLandingHolder1();
-         popMatrix();
-
-         pushMatrix();
-           multTranslation([-20,-20,20]);
-           skidLandingHolder2();
-         popMatrix();
-
-         pushMatrix();
-           multTranslation([20,-20,-20]);
-           skidLandingHolder3();
-         popMatrix();
-           
-           
-           pushMatrix();
-           multTranslation([20,-20,20]);
-           skidLandingHolder4();
-           popMatrix();
-       
-        //main helix
-           pushMatrix();
-              multTranslation([0,25/2,0]);
-                pushMatrix();
-                helixHolder();
-                popMatrix();
-                 pushMatrix();
-               //falta rotacao e as outras helices
-                 multTranslation([-50/3,25/4,0]);
-                 mainHelix1();
-                 popMatrix();
-           popMatrix();
-
-        //skid part verificar se esta certo
-        pushMatrix();
-        multTranslation([0,-50,-12]);
-        multRotationZ(90);
-        
-         pushMatrix();
-         
-        skidLanding1();
-         popMatrix();
-         
-         pushMatrix();
-             multTranslation([0,-50,12]);
-             multRotationZ(90);
-             pushMatrix();
-                 skidLanding2();
-             popMatrix();
-         popMatrix();
-
-
-
-
-        //tail
-        pushMatrix();
-            multTranslation([15, 10, 8]); // 15 = xBody-xBody/4, 10 = yBody, 8 = zBody-zBody/5
-        pushMatrix();
-            helicopterTail1();
-        popMatrix();
-        pushMatrix();
-            multTranslation([12.5, 10, 5]); // 12.5 = xTail1/2, 10 = yTail1*2, 5 = zTail1  
-            multRotationZ(70);  // tail rotation 
-            pushMatrix();
-                helicopterTail2();
-            popMatrix();
-            pushMatrix();
-                multRotationX(90);
-                tailHelixHolder();
-            popMatrix();
-            
-        popMatrix();
-
-
-
-        /*
-        pushMatrix();
-            Sun();
-        popMatrix();
-        pushMatrix();
-            multRotationY(360*time/MERCURY_YEAR);
-            multTranslation([MERCURY_ORBIT, 0, 0]);
-            Mercury();
-        popMatrix();
-        pushMatrix();
-            multRotationY(360*time/VENUS_YEAR);
-            multTranslation([VENUS_ORBIT, 0, 0]);
-            Venus();
-        popMatrix();
-        pushMatrix();
-            multRotationY(360*time/EARTH_YEAR);
-            multTranslation([EARTH_ORBIT, 0, 0]);
-            EarthAndMoon();
-        popMatrix();
-        */
-
+        //translaçao e rotaçao do helicoptero para fazer aqui (valores a toa para ver o helicoptero a mexer)
+        multScale([0.1,0.1,0.1]);
+        multRotationY(time*360/4);
+        multTranslation([500,0,0]); 
+        buildHelicopter();
 
     }
 }
