@@ -11,7 +11,7 @@ import * as CYLINDER from '../../libs/objects/cylinder.js'
 let gl;
 
 let time = 0;           // Global simulation time in days
-let speed = 1 / 60.0;     // Speed (how many days added to time on each render pass)
+let speed = 1 / 60.0;   // Speed (how many days added to time on each render pass)
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
 let animation = true;   // Animation is running
 let gamma = 0;
@@ -58,7 +58,7 @@ function setup(shaders) {
                 if (animation) speed /= 1.1;
                 break;
             case '1':
-                //axionometrica (a unica coisa que pode tar mal é a ordem das multiplicaçoes)
+                //axonometrica (a unica coisa que pode tar mal é a ordem das multiplicaçoes)
                 mView = mult(lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0]), mult(rotateX(gamma),rotateY(theta)));
                 break;
             case '2':
@@ -125,10 +125,8 @@ function setup(shaders) {
         let color = [1.0,0.0,0.0,1.0];  //Red
         setColor(color); 
 
-        // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
-        // Draw a sphere representing the sun
         SPHERE.draw(gl, program, mode);
 
     }
@@ -205,7 +203,6 @@ function setup(shaders) {
             multRotationX(90);
             landingGear();
         popMatrix();
-
         //Landing gear 2
         multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
         multRotationX(90);
@@ -216,10 +213,8 @@ function setup(shaders) {
 
         multScale([25, 5, 5]);  // 25 = xBody+xBody/4, 5 = yBody/2, 5 = zBody/2
 
-        // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
-        // Draw a sphere representing the sun
         SPHERE.draw(gl, program, mode);
 
     }
@@ -228,18 +223,16 @@ function setup(shaders) {
 
         multScale([12.5, 5, 5]);  //12.5 = xTail1/2, 5 = yTail1, 5 = zTail1
 
-        // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
-        // Draw a sphere representing the sun
         SPHERE.draw(gl, program, mode);
 
     }
 
     function buildTailRotorSystem() {
-        pushMatrix();//
+        pushMatrix();
             helixHolder();
-        popMatrix(); //
+        popMatrix();
         multRotationY(time * 360 * 2); // two cycles per second
         pushMatrix();
             multTranslation([4, 2.5, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2
@@ -252,7 +245,7 @@ function setup(shaders) {
     function helixHolder() {
         multScale([2, 5, 2]);
 
-        let color = [1.0,1.0,0.0,1.0]; // Amarelo
+        let color = [1.0,1.0,0.0,1.0]; // Yellow
         setColor(color); 
 
         uploadModelView();
@@ -263,7 +256,7 @@ function setup(shaders) {
     function tailHelix() {
         multScale([12.5/2, 1, 2.5]);  //12.5 = xTail2/2, 1 = yTail2/5, 2.5 = zTail2/2
 
-        let color = [0.0,0.0,1.0,1.0]; // Azul
+        let color = [0.0,0.0,1.0,1.0]; // Blue
         setColor(color);
 
         uploadModelView();
@@ -274,7 +267,7 @@ function setup(shaders) {
      function mainHelix() {
         multScale([25, 1, 2.5]); // 25 = xTailHelix*2, 5 = yTailHelix, 2.5 = zTailHelix
 
-        let color = [0.0,0.0,1.0,0.0];  //Blue
+        let color = [0.0,0.0,1.0,0.0];  // Blue
         setColor(color);    
 
         uploadModelView();
@@ -288,17 +281,15 @@ function setup(shaders) {
         let color = [0.2,0.2,0.2,1.0];
         setColor(color);
 
-        // Send the current modelview matrix to the vertex shader
         uploadModelView();
 
-        // Draw a sphere representing the sun
         CUBE.draw(gl, program, mode);
     }
 
     function landingGear() {
-        multScale([20.0, 2.5, 2.5]);
+        multScale([20.0, 2.5, 2.5]); //20 = xBody, 2.5 = yTail1/2, 2.5 = zTail1/2
 
-        let color = [1.0,1.0,0.0,1.0]; // Amarelo
+        let color = [1.0,1.0,0.0,1.0]; // Yellow
         
         setColor(color);
 
@@ -311,7 +302,7 @@ function setup(shaders) {
         multRotationY(time*360/4); // rotaçao do helicoptero
         multTranslation([50,0,0]); // translaçao do helicoptero
         helicopterPosition = mModelPoint();
-        multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ACHO QUE ISTO NAO SAO 10 METROS)
+        multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ISTO NAO SAO 10 METROS)
         pushMatrix();
             buildMainBody();
         popMatrix();
@@ -329,9 +320,9 @@ function setup(shaders) {
     }
 
     function buildSurface() {
-        multScale([100,1,100]); //11  helicopteros em largura talvez(?)
+        multScale([100,1,100]); //11  helicopteros em largura talvez(testar mais tarde?)
 
-        let color = [1.0,1.0,1.0,1.0]; // Branco
+        let color = [1.0,1.0,1.0,1.0]; // White
         
         setColor(color);
 
@@ -343,7 +334,7 @@ function setup(shaders) {
     function box() {
         multScale([4,2,1]); //20/5 10/5 5/5
 
-        let color = [1.0,1.0,1.0,1.0]; // Branco
+        let color = [1.0,1.0,1.0,1.0]; // Green
         
         setColor(color);
 
@@ -389,15 +380,15 @@ function setup(shaders) {
 
     function World() {
         //translaçao e rotaçao do helicoptero para fazer aqui (valores a toa para ver o helicoptero a mexer)
-        //plano   
+        //Plane  
         pushMatrix();
             Plane();
         popMatrix();
-        //helicoptero
+        //Helicopter
         pushMatrix();
             buildHelicopter();
         popMatrix();
-        //Caixas criadas
+        //Created boxes
         Boxes();
     }
 
