@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, vec4, inverse, mult, rotateX, rotateY } from "../../libs/MV.js";
 import { modelView, loadMatrix, multRotationX, multRotationZ, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
@@ -14,34 +14,13 @@ let time = 0;           // Global simulation time in days
 let speed = 1 / 60.0;     // Speed (how many days added to time on each render pass)
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
 let animation = true;   // Animation is running
+let gamma = 0;
+let theta = 0;
+let boxes = [];
+let helicopterPosition;
 
-const PLANET_SCALE = 10;    // scale that will apply to each planet and satellite
-const ORBIT_SCALE = 1 / 60;   // scale that will apply to each orbit around the sun
-
-const SUN_DIAMETER = 1391900;
-const SUN_DAY = 24.47; // At the equator. The poles are slower as the sun is gaseous
-
-const MERCURY_DIAMETER = 4866 * PLANET_SCALE;
-const MERCURY_ORBIT = 57950000 * ORBIT_SCALE;
-const MERCURY_YEAR = 87.97;
-const MERCURY_DAY = 58.646;
-
-const VENUS_DIAMETER = 12106 * PLANET_SCALE;
-const VENUS_ORBIT = 108110000 * ORBIT_SCALE;
-const VENUS_YEAR = 224.70;
-const VENUS_DAY = 243.018;
-
-const EARTH_DIAMETER = 12742 * PLANET_SCALE;
-const EARTH_ORBIT = 149570000 * ORBIT_SCALE;
-const EARTH_YEAR = 365.26;
-const EARTH_DAY = 0.99726968;
-
-const MOON_DIAMETER = 3474 * PLANET_SCALE;
-const MOON_ORBIT = 363396 * ORBIT_SCALE * 60;
-const MOON_YEAR = 28;
-const MOON_DAY = 0;
-
-const VP_DISTANCE = 50; //antes estava EARTH_ORBIT
+const WORLD_SCALE = 50; 
+const EARTH_GRAVITY = 9.8;
 
 
 
@@ -53,8 +32,8 @@ function setup(shaders) {
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
-    let mProjection = ortho(-VP_DISTANCE * aspect, VP_DISTANCE * aspect, -VP_DISTANCE, VP_DISTANCE, -3 * VP_DISTANCE, 3 * VP_DISTANCE);
-    let mView = lookAt([0, VP_DISTANCE, VP_DISTANCE], [0, 0, 0], [0, 1, 0]);
+    let mProjection = ortho(-WORLD_SCALE * aspect, WORLD_SCALE * aspect, -WORLD_SCALE, WORLD_SCALE, -3 * WORLD_SCALE, 3 * WORLD_SCALE);
+    let mView = lookAt([0, WORLD_SCALE, WORLD_SCALE], [0, 0, 0], [0, 1, 0]);
 
     mode = gl.LINES;
 
@@ -78,6 +57,10 @@ function setup(shaders) {
             case '-':
                 if (animation) speed /= 1.1;
                 break;
+            case '1':
+                //axionometrica (a unica coisa que pode tar mal é a ordem das multiplicaçoes)
+                mView = mult(lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0]), mult(rotateX(gamma),rotateY(theta)));
+                break;
             case '2':
                 //frente
                 mView = lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0]);
@@ -92,11 +75,17 @@ function setup(shaders) {
                 break;
             case 'k':
                 //regressa ao normal, nao e para o trabalho, so para ajudar
-                mView = lookAt([0, VP_DISTANCE, VP_DISTANCE], [0, 0, 0], [0, 1, 0]);
+                mView = lookAt([0, WORLD_SCALE, WORLD_SCALE], [0, 0, 0], [0, 1, 0]);
                 break;
 
         }
     }
+    // para a caixa (n sei se se faz onkeyup ou onkeydown)
+    document.body.onkeyup = function(event) {
+        if (event.code == "Space") {
+            boxes.push({time:time, speed:speed, point: helicopterPosition});
+        }
+      }
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     SPHERE.init(gl);
@@ -114,7 +103,7 @@ function setup(shaders) {
         aspect = canvas.width / canvas.height;
 
         gl.viewport(0, 0, canvas.width, canvas.height);
-        mProjection = ortho(-VP_DISTANCE * aspect, VP_DISTANCE * aspect, -VP_DISTANCE, VP_DISTANCE, -3 * VP_DISTANCE, 3 * VP_DISTANCE);
+        mProjection = ortho(-WORLD_SCALE * aspect, WORLD_SCALE * aspect, -WORLD_SCALE, WORLD_SCALE, -3 * WORLD_SCALE, 3 * WORLD_SCALE);
     }
 
     function uploadModelView() {
@@ -129,7 +118,7 @@ function setup(shaders) {
         gl.uniform4fv(uColor, color);
     }
 
-    function buildBody() {
+    function buildMainBody() {
 
         multScale([20, 10, 10]);
 
@@ -149,59 +138,61 @@ function setup(shaders) {
         pushMatrix();
             helicopterTail1();
         popMatrix();
+        multTranslation([12.5, 5, 0]); // 12.5 = xTail1/2, 10 = yTail1*2
+        multRotationZ(70);  // tail2 rotation 
         pushMatrix();
-            multTranslation([12.5, 5, 0]); // 12.5 = xTail1/2, 10 = yTail1*2
-            multRotationZ(70);  // tail2 rotation 
-            pushMatrix();
-                helicopterTail2();
-            popMatrix();
-            pushMatrix();
-                buildTailRotorSystem();
-            popMatrix();
+            helicopterTail2();
         popMatrix();
+            buildTailRotorSystem();
     }
 
     function buildUpperRotor() {
         multTranslation([0, 5, 0]); // 5 = yBody/2 
+        //Helix holder
         pushMatrix();
             helixHolder();
         popMatrix();
         multRotationY(time * 360 * 2);
+        //Helix 1
         pushMatrix();
             multTranslation([10, 5 / 4, 0]); //10 = xBody/2, y = yHelixHolder/4
             mainHelix();
         popMatrix();
+        //Helix 2
         pushMatrix();
             multRotationY(120);    
             multTranslation([10, 5 / 4, 0]);
             mainHelix();
         popMatrix();
-        pushMatrix();
-            multRotationY(240);
-            multTranslation([10, 5 / 4, 0]);
-            mainHelix();
-        popMatrix();
+        //Helix 3
+        multRotationY(240);
+        multTranslation([10, 5 / 4, 0]);
+        mainHelix();
     }
 
     function buildLowerBody() {
+        //Support 1
         pushMatrix();    
             multTranslation([-6, -5, 4]);   //-6 = -(3xBody/10), -5 = -(yBody/2), 4 = (2zBody/5)
             multRotationX(150); 
             multRotationZ(15); 
             supportLeg();
         popMatrix();
+        //Support 2
         pushMatrix();
             multTranslation([6,-5,4]);      //6 = (3xBody/10), -5 = -(yBody/2), 4 = (2zBody/5)
             multRotationX(150);
             multRotationZ(-15); 
             supportLeg();
         popMatrix();
+        //Support 3
         pushMatrix();
             multTranslation([6,-5,-4]);     //6 = (3xBody/10), -5 = -(yBody/2), -4 = -(2zBody/5)
             multRotationX(-150);
             multRotationZ(-15); 
             supportLeg();
         popMatrix();
+        //Support 4
         pushMatrix();
             multTranslation([-6,-5,-4]);    //-6 = -(3xBody/10), -5 = -(yBody/2), -4 = -(2zBody/5)
             multRotationX(-150);
@@ -209,17 +200,17 @@ function setup(shaders) {
             supportLeg();
         popMatrix();
 
+        //Landing gear 1
         pushMatrix();
             multTranslation([0,-7.5,5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
             multRotationX(90);
             landingGear();
         popMatrix();
 
-        pushMatrix();
-            multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
-            multRotationX(90);
-            landingGear();
-        popMatrix();
+        //Landing gear 2
+        multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
+        multRotationX(90);
+        landingGear();
     }
 
     function helicopterTail1() {
@@ -251,17 +242,13 @@ function setup(shaders) {
         pushMatrix();//
             helixHolder();
         popMatrix(); //
-        pushMatrix(); // pode se retirar acho
-            multRotationY(time * 360 * 2); // two cycles per second
-            pushMatrix();
-                multTranslation([4, 2.5, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2
-                tailHelix();
-            popMatrix();
-            pushMatrix();
-                multTranslation([-4, 2.5, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2
-                tailHelix();
-            popMatrix();
-        popMatrix(); // pode se retirar acho
+        multRotationY(time * 360 * 2); // two cycles per second
+        pushMatrix();
+            multTranslation([4, 2.5, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2
+            tailHelix();
+        popMatrix();
+        multTranslation([-4, 2.5, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2
+        tailHelix();
     }
 
     function helixHolder() {
@@ -323,21 +310,66 @@ function setup(shaders) {
     }
 
     function buildHelicopter() {
-        pushMatrix();
-            buildBody();
+        pushMatrix();  
+            //multRotationY(time*360/4); // rotaçao do helicoptero
+            //multTranslation([50,0,0]); // translaçao do helicoptero
+            //helicopterPosition = mModelPoint();
+            //multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ACHO QUE ISTO NAO SAO 10 METROS)
+    
+        
+            pushMatrix();
+                buildMainBody();
+            popMatrix();
+
+            pushMatrix();
+                buildTail();
+            popMatrix();
+
+            pushMatrix();
+                buildUpperRotor();
+            popMatrix();
+
+            pushMatrix();
+                buildLowerBody();
+            popMatrix();
+
         popMatrix();
 
-        pushMatrix();
-            buildTail();
-        popMatrix();
+    }
 
-        pushMatrix();
-            buildUpperRotor();
-        popMatrix();
+    function buildSurface() {
+        multScale([100,1,100]); //11  helicopteros em largura talvez(?)
 
-        pushMatrix();
-            buildLowerBody();
-        popMatrix();
+        let color = [1.0,1.0,1.0,1.0]; // Branco
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+    }
+
+    function box() {
+        multScale([4,2,1]); //20/5 10/5 5/5
+
+        let color = [1.0,1.0,1.0,1.0]; // Branco
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+        
+    }
+
+    function mModelPoint() {
+        let mModel = mult(inverse(mView), modelView()); // se n for assim é ao contrario
+        let point = mult(mModel, vec4(0.0,0.0,0.0,1.0));
+        
+        return [point[0],point[1],point[2]];
+    }
+
+    function world() {
 
     }
 
@@ -355,11 +387,39 @@ function setup(shaders) {
         loadMatrix(mView);
 
         //translaçao e rotaçao do helicoptero para fazer aqui (valores a toa para ver o helicoptero a mexer)
-        multScale([0.1,0.1,0.1]);
-        multRotationY(time*360/4);
-        multTranslation([500,0,0]); 
-        buildHelicopter();
+        //plano   
+        /*pushMatrix();
+            multTranslation([0.0,-15.0,0.0]); 
+            multRotationY(45);
+            buildSurface();
+        popMatrix();*/
+        //helicoptero
+        pushMatrix();  
+            //multRotationY(time*360/4); // rotaçao do helicoptero
+            //multTranslation([50,0,0]); // translaçao do helicoptero
+            //helicopterPosition = mModelPoint();
+            //multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ACHO QUE ISTO NAO SAO 10 METROS)
+            buildHelicopter();      
+        popMatrix();
+        /*//Caixas criadas
+        for (const b of boxes) {
+            if (time - b.time < 5) { // como fazer para caso de aumentar a velocidade? a caixa desaparece mais rapido?
+                pushMatrix();
+                    multTranslation(b.point);
+                    //fazer uma verificaçao para saber se a caixa ja atingiu o chao
+                    if (b.speed < 14) { // the surface is 14 units below the helicopter(MIGHT NEED CHANGING)
+                        multTranslation([0.0,-b.speed,0.0]);
+                        b.speed+=(time-b.time)/EARTH_GRAVITY;     // NAO SEI SE ESTA NECESSARIAMENTE CERTO
+                    } 
+                    else
+                        multTranslation([0.0,-14,0.0]) // puts the box on the floor
 
+                    box();
+
+                popMatrix();
+            }
+
+        }   */           
     }
 }
 
