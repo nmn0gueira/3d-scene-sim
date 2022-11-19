@@ -134,7 +134,6 @@ function setup(shaders) {
     }
 
     function buildTail() {
-        multTranslation([15, 2, 0]); // 15 = 3xBody/4, 2 = yBody/5
         pushMatrix();
             helicopterTail1();
         popMatrix();
@@ -143,11 +142,11 @@ function setup(shaders) {
         pushMatrix();
             helicopterTail2();
         popMatrix();
-            buildTailRotorSystem();
+        multRotationX(90);
+        buildTailRotorSystem();
     }
 
     function buildUpperRotor() {
-        multTranslation([0, 5, 0]); // 5 = yBody/2 
         //Helix holder
         pushMatrix();
             helixHolder();
@@ -238,7 +237,6 @@ function setup(shaders) {
     }
 
     function buildTailRotorSystem() {
-        multRotationX(90);
         pushMatrix();//
             helixHolder();
         popMatrix(); //
@@ -310,31 +308,24 @@ function setup(shaders) {
     }
 
     function buildHelicopter() {
-        pushMatrix();  
-            //multRotationY(time*360/4); // rotaçao do helicoptero
-            //multTranslation([50,0,0]); // translaçao do helicoptero
-            //helicopterPosition = mModelPoint();
-            //multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ACHO QUE ISTO NAO SAO 10 METROS)
-    
-        
-            pushMatrix();
-                buildMainBody();
-            popMatrix();
-
-            pushMatrix();
-                buildTail();
-            popMatrix();
-
-            pushMatrix();
-                buildUpperRotor();
-            popMatrix();
-
-            pushMatrix();
-                buildLowerBody();
-            popMatrix();
-
+        multRotationY(time*360/4); // rotaçao do helicoptero
+        multTranslation([50,0,0]); // translaçao do helicoptero
+        helicopterPosition = mModelPoint();
+        multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ACHO QUE ISTO NAO SAO 10 METROS)
+        pushMatrix();
+            buildMainBody();
+        popMatrix();
+        pushMatrix();
+            multTranslation([15, 2, 0]); // 15 = 3xBody/4, 2 = yBody/5
+            buildTail();
         popMatrix();
 
+        pushMatrix();
+            multTranslation([0, 5, 0]); // 5 = yBody/2 
+            buildUpperRotor();
+        popMatrix();
+
+        buildLowerBody();
     }
 
     function buildSurface() {
@@ -369,39 +360,13 @@ function setup(shaders) {
         return [point[0],point[1],point[2]];
     }
 
-    function world() {
-
+    function Plane() {
+        multTranslation([0.0,-15.0,0.0]); 
+        multRotationY(45);
+        buildSurface();
     }
 
-
-    function render() {
-        if (animation) time += speed;
-        window.requestAnimationFrame(render);
-
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        gl.useProgram(program);
-
-        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
-
-        loadMatrix(mView);
-
-        //translaçao e rotaçao do helicoptero para fazer aqui (valores a toa para ver o helicoptero a mexer)
-        //plano   
-        /*pushMatrix();
-            multTranslation([0.0,-15.0,0.0]); 
-            multRotationY(45);
-            buildSurface();
-        popMatrix();*/
-        //helicoptero
-        pushMatrix();  
-            //multRotationY(time*360/4); // rotaçao do helicoptero
-            //multTranslation([50,0,0]); // translaçao do helicoptero
-            //helicopterPosition = mModelPoint();
-            //multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ACHO QUE ISTO NAO SAO 10 METROS)
-            buildHelicopter();      
-        popMatrix();
-        /*//Caixas criadas
+    function Boxes() {
         for (const b of boxes) {
             if (time - b.time < 5) { // como fazer para caso de aumentar a velocidade? a caixa desaparece mais rapido?
                 pushMatrix();
@@ -419,7 +384,37 @@ function setup(shaders) {
                 popMatrix();
             }
 
-        }   */           
+        } 
+    }
+
+    function World() {
+        //translaçao e rotaçao do helicoptero para fazer aqui (valores a toa para ver o helicoptero a mexer)
+        //plano   
+        pushMatrix();
+            Plane();
+        popMatrix();
+        //helicoptero
+        pushMatrix();
+            buildHelicopter();
+        popMatrix();
+        //Caixas criadas
+        Boxes();
+    }
+
+
+    function render() {
+        if (animation) time += speed;
+        window.requestAnimationFrame(render);
+
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        gl.useProgram(program);
+
+        gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
+
+        loadMatrix(mView);
+
+        World();
     }
 }
 
