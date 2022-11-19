@@ -334,7 +334,7 @@ function setup(shaders) {
     function box() {
         multScale([4,2,1]); //20/5 10/5 5/5
 
-        let color = [1.0,1.0,1.0,1.0]; // Green
+        let color = [0.0,1.0,0.0,1.0]; // Green
         
         setColor(color);
 
