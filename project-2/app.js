@@ -5,6 +5,7 @@ import { modelView, loadMatrix, multRotationX, multRotationZ, multRotationY, mul
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CUBE from '../../libs/objects/cube.js'
 import * as CYLINDER from '../../libs/objects/cylinder.js'
+import { GUI } from "../libs/dat.gui.module.js";
 
 
 /** @type WebGLRenderingContext */
@@ -14,28 +15,33 @@ let time = 0;           // Global simulation time in days
 let speed = 1 / 60.0;   // Speed (how many days added to time on each render pass)
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
 let animation = true;   // Animation is running
-let gamma = 0;
-let theta = 0;
+let objectProps = {gamma:0, theta:0};
 let boxes = [];
 let helicopterPosition;
+let axonometricProjection = true; // the program starts with axonometric projection
 
 const WORLD_SCALE = 50; 
 const EARTH_GRAVITY = 9.8;
 
 
 
+
 function setup(shaders) {
     let canvas = document.getElementById("gl-canvas");
     let aspect = canvas.width / canvas.height;
+    const gui = new GUI();
 
     gl = setupWebGL(canvas);
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
     let mProjection = ortho(-WORLD_SCALE * aspect, WORLD_SCALE * aspect, -WORLD_SCALE, WORLD_SCALE, -3 * WORLD_SCALE, 3 * WORLD_SCALE);
-    let mView = lookAt([0, WORLD_SCALE, WORLD_SCALE], [0, 0, 0], [0, 1, 0]);
-
+    let mView;
     mode = gl.LINES;
+
+    //Controls for the axonometric projection
+    gui.add(objectProps, "gamma", 0, 360, 1).name("X");
+    gui.add(objectProps, "theta", 0, 360, 1).name("Y");
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
@@ -58,20 +64,23 @@ function setup(shaders) {
                 if (animation) speed /= 1.1;
                 break;
             case '1':
-                //axonometrica (a unica coisa que pode tar mal é a ordem das multiplicaçoes)
-                mView = mult(lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0]), mult(rotateX(gamma),rotateY(theta)));
+                //axonometrica
+                axonometricProjection = true;
                 break;
             case '2':
                 //frente
                 mView = lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0]);
+                axonometricProjection = false;
                 break;
             case '3':
                 //cima
                 mView = lookAt([0, 1, 0], [0, 0, 0], [0, 0, -1]);
+                axonometricProjection = false;
                 break;
             case '4':
                 //lado direito , nest momento esta a nostrar a parte de tras
                 mView = lookAt([0, 0, 1], [0, 0, 0], [0, 1, 0]);
+                axonometricProjection = false;
                 break;
             case 'k':
                 //regressa ao normal, nao e para o trabalho, so para ajudar
@@ -87,7 +96,7 @@ function setup(shaders) {
         }
       }
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(135/255, 206/255, 235/255, 1.0); // 135, 206, 235
     SPHERE.init(gl);
     CUBE.init(gl);
     CYLINDER.init(gl);
@@ -300,7 +309,7 @@ function setup(shaders) {
 
     function buildHelicopter() {
         multRotationY(time*360/4); // rotaçao do helicoptero
-        multTranslation([50,0,0]); // translaçao do helicoptero
+        multTranslation([30,0,0]); // translaçao do helicoptero (o raio é 30)
         helicopterPosition = mModelPoint();
         multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ISTO NAO SAO 10 METROS)
         pushMatrix();
@@ -319,10 +328,10 @@ function setup(shaders) {
         buildLowerBody();
     }
 
-    function buildSurface() {
+    function Plane() {
         multScale([100,1,100]); //11  helicopteros em largura talvez(testar mais tarde?)
 
-        let color = [1.0,1.0,1.0,1.0]; // White
+        let color = [42/255,41/255,34/255,1.0]; // 42, 41, 34 Asphalt
         
         setColor(color);
 
@@ -344,6 +353,18 @@ function setup(shaders) {
         
     }
 
+    function Sun() {
+        multScale([10,10,10]);  // 10 = WORLD_SCALE/5
+  
+        let color = [253/255,184/255,19/255,1.0]; // Color of the sun
+        
+        setColor(color);
+
+        uploadModelView();
+
+        SPHERE.draw(gl, program, mode);
+    }
+
     function mModelPoint() {
         let mModel = mult(inverse(mView), modelView()); // se n for assim é ao contrario
         let point = mult(mModel, vec4(0.0,0.0,0.0,1.0));
@@ -351,11 +372,6 @@ function setup(shaders) {
         return [point[0],point[1],point[2]];
     }
 
-    function Plane() {
-        multTranslation([0.0,-15.0,0.0]); 
-        multRotationY(45);
-        buildSurface();
-    }
 
     function Boxes() {
         for (const b of boxes) {
@@ -365,10 +381,10 @@ function setup(shaders) {
                     //fazer uma verificaçao para saber se a caixa ja atingiu o chao
                     if (b.speed < 14) { // the surface is 14 units below the helicopter(MIGHT NEED CHANGING)
                         multTranslation([0.0,-b.speed,0.0]);
-                        b.speed+=(time-b.time)/EARTH_GRAVITY;     // NAO SEI SE ESTA NECESSARIAMENTE CERTO
+                        b.speed+=(time-b.time)/EARTH_GRAVITY;  // NAO SEI SE ESTA NECESSARIAMENTE CERTO E NAO TOMA EM CONTA A VELOCIDADE DA ANIMAÇAO AUMENTAR O QUE AINDA NAO SEI SE EXISTE
                     } 
                     else
-                        multTranslation([0.0,-14,0.0]) // puts the box on the floor
+                        multTranslation([0.0,-14.0,0.0]) // puts the box on the floor
 
                     box();
 
@@ -380,8 +396,15 @@ function setup(shaders) {
 
     function World() {
         //translaçao e rotaçao do helicoptero para fazer aqui (valores a toa para ver o helicoptero a mexer)
+        //Sun (EXPERIMENTAL)
+        pushMatrix();
+            multTranslation([0, 30,50]);    //30 = 3WORLD_SCALE/5, 50 = WORLD_SCALE
+            Sun();
+        popMatrix();
         //Plane  
         pushMatrix();
+            multTranslation([0.0,-15.0,0.0]); 
+            multRotationY(45);
             Plane();
         popMatrix();
         //Helicopter
@@ -403,8 +426,11 @@ function setup(shaders) {
 
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
-        loadMatrix(mView);
+        //(a unica coisa que pode tar mal é a ordem das multiplicaçoes, mas acho que ja ta bem)
+        if (axonometricProjection)
+            mView = mult(rotateY(objectProps.theta),mult(rotateX(objectProps.gamma), lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0])));
 
+        loadMatrix(mView);
         World();
     }
 }
