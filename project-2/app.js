@@ -40,7 +40,7 @@ function setup(shaders) {
 
     let mProjection = ortho(-WORLD_SCALE * aspect, WORLD_SCALE * aspect, -WORLD_SCALE, WORLD_SCALE, -3 * WORLD_SCALE, 3 * WORLD_SCALE);
     let mView;
-    mode = gl.LINES;
+    mode = gl.TRIANGLES;
 
     //Controls for the axonometric projection
     gui.add(objectProps, "gamma", 0, 360, 1).name("X");
@@ -73,20 +73,24 @@ function setup(shaders) {
                 axonometricProjection = true;
                 break;
             case '2':
-                //frente
-                mView = lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0]);
+                // Front view
+                mView = lookAt([0,0,1], [0,0,0], [0,1,0]);
                 axonometricProjection = false;
                 break;
             case '3':
-                //cima
-                mView = lookAt([0, 1, 0], [0, 0, 0], [0, 0, -1]);
+                // Top view
+                mView = lookAt([0,1,0],  [0,0,0], [0,0,-1]);
                 axonometricProjection = false;
                 break;
             case '4':
-                //lado direito, VERIFICAR SE ISTO NAO É O LADO ESQUERDO POR ACASO
-                mView = lookAt([0, 0, 1], [0, 0, 0], [0, 1, 0]);
+                // Right view
+                mView = lookAt([1, 0, 0], [0, 0, 0], [0, 1, 0]);
                 axonometricProjection = false;
                 break;
+            /*case '5':
+                mView = lookAt(helicopterPosition, [0, 0, 0], [0, 1, 0]);
+                axonometricProjection = false;
+                break;*/
             case 'k':
                 //regressa ao normal, nao e para o trabalho, so para ajudar
                 mView = lookAt([0, WORLD_SCALE, WORLD_SCALE], [0, 0, 0], [0, 1, 0]);
@@ -431,7 +435,7 @@ function setup(shaders) {
         //Plane  
         pushMatrix();
             multTranslation([0.0,-15.0,0.0]); 
-            multRotationY(45);
+            //multRotationY(45);
             Plane();
         popMatrix();
         //Helicopter
@@ -454,8 +458,8 @@ function setup(shaders) {
         gl.uniformMatrix4fv(gl.getUniformLocation(program, "mProjection"), false, flatten(mProjection));
 
         //(a unica coisa que pode tar mal é a ordem das multiplicaçoes, mas acho que ja ta bem)
-        if (axonometricProjection)
-            mView = mult(rotateY(objectProps.theta),mult(rotateX(objectProps.gamma), lookAt([-1, 0, 0], [0, 0, 0], [0, 1, 0])));
+        if (axonometricProjection)                                                     
+            mView = mult(rotateY(objectProps.theta),mult(rotateX(objectProps.gamma), lookAt([0, 0, 1], [0, 0, 0], [0, 1, 0])));
 
         loadMatrix(mView);
         World();
