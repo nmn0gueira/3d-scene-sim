@@ -12,7 +12,8 @@ import { GUI } from "../libs/dat.gui.module.js";
 let gl;
 
 let time = 0;           // Global simulation time in seconds
-let speed = 1 / 60.0;   // Helicopter Speed
+let speed = 0;   // Helicopter Speed
+let helixSpeed = 0;
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
 let animation = true;   // Animation is running
 let objectProps = {gamma:0, theta:0};
@@ -22,9 +23,13 @@ let axonometricProjection = true; // the program starts with axonometric project
 let airborne = false;
 let timeTakeoff = -1;
 let timeLanding = -1;   // so the helicopter starts on the floor instead of starting falling down
+let height = 0;
+let rotationInput = 0;
 
 const WORLD_SCALE = 50; 
 const EARTH_GRAVITY = 9.8;
+const MAX_HEIGHT = 30;  // VERIFICAR ISTO
+const MAX_SPEED = 1;
 
 
 
@@ -60,13 +65,35 @@ function setup(shaders) {
             case 'p':
                 animation = !animation;
                 break;
+            case 'ArrowUp':
+                //maybe fazer com que so levante voo apos rodar as helices com uma certa velocidade
+                //isto podia estar melhor
+                if (height<MAX_HEIGHT) {
+                    height = height+MAX_HEIGHT*0.01>=MAX_HEIGHT ? MAX_HEIGHT : height+MAX_HEIGHT*0.01;
+                    console.log(height);
+                    
+                } 
+                if (!airborne) {
+                    airborne = true;
+                    timeTakeoff = time;
+                }
+                break;
+            case 'ArrowDown':
+                //isto podia estar melhor
+                if (height > 0)  {
+                    height = height-MAX_HEIGHT*0.01<0 ? 0 : height-MAX_HEIGHT*0.01;
+                    if (height == 0) { //if after moving down the helicopter landed
+                        airborne = false;
+                        timeLanding = time;
+                    }
+                }
+                break;
             case 'ArrowLeft': // codigo para movimentar o helicoptero
-                break;
-            case '+':
-                if (animation) speed *= 1.1;
-                break;
-            case '-':
-                if (animation) speed /= 1.1;
+                if (airborne)  {
+                    rotationInput += speed;
+                    if (speed < MAX_SPEED)
+                        speed += 0.5;
+                }
                 break;
             case '1':
                 //axonometrica
@@ -95,7 +122,6 @@ function setup(shaders) {
                 //regressa ao normal, nao e para o trabalho, so para ajudar
                 mView = lookAt([0, WORLD_SCALE, WORLD_SCALE], [0, 0, 0], [0, 1, 0]);
                 break;
-
         }
     }
     // para a caixa (n sei se se faz onkeyup ou onkeydown)
@@ -104,7 +130,7 @@ function setup(shaders) {
             boxes.push({time:time, speed:speed, point: helicopterPosition});
         }
         // the helicopter cannot go down before being finishing going down
-        if (event.code == "ArrowUp" && airborne == false && time - timeLanding > 1) {
+        /*if (event.code == "ArrowUp" && airborne == false && time - timeLanding > 1) {
             airborne = true;
             timeTakeoff = time;
         }
@@ -115,8 +141,9 @@ function setup(shaders) {
         }
         if (event.code == "ArrowLeft") {
             // Codigo para abrandar o helicoptero
-        }
+        }*/
       }
+
 
     gl.clearColor(135/255, 206/255, 235/255, 1.0); // 135, 206, 235 Sky
     SPHERE.init(gl);
@@ -330,17 +357,6 @@ function setup(shaders) {
     }
 
     function buildHelicopter() {
-        //12.5 = (translaçao em y feita pelo plano -(yPlano/2) -(0.2*translaçao em y de landing gear) - (0.2*yLandingGear/2))
-        //multRotationY(time*360/4); // rotaçao do helicoptero
-        let y = time-timeLanding > 1 ? 1 : time-timeLanding;
-        multTranslation([30,-12.5*y,0.0]); // translaçao do helicoptero (o raio é 30)
-        if (airborne) {
-            y = time-timeTakeoff > 1 ? 1 : time-timeTakeoff;
-            multTranslation([0.0,12.5*y,0.0]);
-        }
-
-        helicopterPosition = mModelPoint();
-        multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ISTO NAO SAO 10 METROS)
         pushMatrix();
             buildMainBody();
         popMatrix();
@@ -404,18 +420,18 @@ function setup(shaders) {
 
     function Boxes() {
         for (const b of boxes) {
-            if (time - b.time < 5) { // como fazer para caso de aumentar a velocidade? a caixa desaparece mais rapido?
+            if (time - b.time < 5) {
                 pushMatrix();
                     multTranslation(b.point);
-                    //fazer uma verificaçao para saber se a caixa ja atingiu o chao
-                    //talvez usar um ternary operator em vez de um if e else
-                    //13.5 = translaçao em y feita pelo plano - (yBox/2+yPlano/2)
-                    if (b.speed < 13.5) { // the surface is 13.5 units below the helicopter(MIGHT NEED CHANGING)
+                    //1 = yBox/2 (NAO TENHO A  CERTEZA ACERCA DISTO)
+                    //b.point[1] is the height at which the box was dropped
+                    //1.5 = (yBox/2+yPlane/2)
+                    if (b.speed < b.point[1]-1.5) {
                         multTranslation([0.0,-b.speed,0.0]);
-                        b.speed+=(time-b.time)/EARTH_GRAVITY;  // NAO SEI SE ESTA NECESSARIAMENTE CERTO E NAO TOMA EM CONTA A VELOCIDADE DA ANIMAÇAO AUMENTAR O QUE AINDA NAO SEI SE EXISTE
+                        b.speed+=(time-b.time)/EARTH_GRAVITY; // NAO SEI SE ESTA NECESSARIAMENTE CERTO E NAO TOMA EM CONTA A VELOCIDADE DA ANIMAÇAO AUMENTAR O QUE AINDA NAO SEI SE EXISTE
                     } 
                     else
-                        multTranslation([0.0,-13.5,0.0]) // puts the box on the floor
+                        multTranslation([0.0,-(b.point[1]-1.5),0.0]) // puts the box on the floor
 
                     box();
 
@@ -426,20 +442,31 @@ function setup(shaders) {
     }
 
     function World() {
-        //translaçao e rotaçao do helicoptero para fazer aqui (valores a toa para ver o helicoptero a mexer)
         //Sun (EXPERIMENTAL)
-        pushMatrix();
-            multTranslation([0, 30,50]);    //30 = 3WORLD_SCALE/5, 50 = WORLD_SCALE
-            Sun();
-        popMatrix();
+        //pushMatrix();
+            //multTranslation([0, 30,50]);    //30 = 3WORLD_SCALE/5, 50 = WORLD_SCALE
+            //Sun();
+        //popMatrix();
         //Plane  
         pushMatrix();
-            multTranslation([0.0,-15.0,0.0]); 
-            //multRotationY(45);
+            multRotationY(45); //DESNECESSARIO PROVAVELMENTE
             Plane();
         popMatrix();
         //Helicopter
-        pushMatrix();
+        pushMatrix();         
+            multRotationY(rotationInput); // movimento em torno de y do helicoptero
+            multTranslation([30,0.0,0.0]); // translaçao do helicoptero (o raio é 30)
+            multTranslation([0,2.5+height,0.0]); //2.5 = ((yPlano/2) + (0.2*translaçao em y de landing gear) + (0.2*yLandingGear/2))
+            multRotationY(-90);
+            /*if (airborne) {
+                speed = time-timeTakeoff > 1 ? 1 : time-timeTakeoff;
+                //multTranslation([0.0,12.5*y,0.0]);
+            }
+            else {
+                speed = 1-(time-timeLanding) < 0 ? 0 : 1-(time-timeLanding);
+            }*/
+            helicopterPosition = mModelPoint();
+            multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ISTO NAO SAO 10 METROS)
             buildHelicopter();
         popMatrix();
         //Created boxes
