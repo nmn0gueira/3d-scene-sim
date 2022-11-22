@@ -12,26 +12,28 @@ import { GUI } from "../libs/dat.gui.module.js";
 let gl;
 
 let time = 0;           // Global simulation time in seconds
-let speed = 0;   // Helicopter Speed
-let helixSpeed = 0;
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
 let animation = true;   // Animation is running
 let objectProps = {gamma:0, theta:0};
-let boxes = [];
-let helicopterPosition;
 let axonometricProjection = true; // the program starts with axonometric projection
-let airborne = false;
-let timeTakeoff = -1;
-let timeLanding = -1;   // so the helicopter starts on the floor instead of starting falling down
-let height = 0;
-let rotationInput = 0;
+let arrowLeft = false;
+let keys = {};
 
 const WORLD_SCALE = 50; 
 const EARTH_GRAVITY = 9.8;
-const MAX_HEIGHT = 30;  // VERIFICAR ISTO
-const MAX_SPEED = 1;
+const MAX_HEIGHT = 30;
+const MAX_SPEED = 5;
+const MAX_INCLINATION = 30;
+const HELICOPTER_ACCELERATION = 0.25; // MAX_SPEED/20   antes estava MAX_SPEED/10
+const HELICOPTER_INCLINATION = 1.5; // MAX_INCLINATION/20 antes estava MAX_INCLINATION/10
 
-
+//Helicopter related
+let speed = 0;          
+let height = 0;
+let movement = 0;       // Y axis rotation related to the center of the world
+let inclination = 0;    // X axis rotation on the helicopter
+let position;           // World coordinates of the helicopter
+let boxes = [];         // Boxes the helicopter drops
 
 
 function setup(shaders) {
@@ -66,47 +68,42 @@ function setup(shaders) {
                 animation = !animation;
                 break;
             case 'ArrowUp':
-                //maybe fazer com que so levante voo apos rodar as helices com uma certa velocidade
-                //isto podia estar melhor
-                if (height<MAX_HEIGHT) {
-                    height = height+MAX_HEIGHT*0.01>=MAX_HEIGHT ? MAX_HEIGHT : height+MAX_HEIGHT*0.01;
-                    console.log(height);
-                    
-                } 
-                if (!airborne) {
-                    airborne = true;
-                    timeTakeoff = time;
+                //fazer com que so levante voo apos rodar as helices com uma certa velocidade
+                if (height < MAX_HEIGHT) {
+                    height += 0.5;
                 }
                 break;
             case 'ArrowDown':
-                //isto podia estar melhor
-                if (height > 0)  {
-                    height = height-MAX_HEIGHT*0.01<0 ? 0 : height-MAX_HEIGHT*0.01;
-                    if (height == 0) { //if after moving down the helicopter landed
-                        airborne = false;
-                        timeLanding = time;
-                    }
+                if (height > 0) {
+                    height -= 0.5;
                 }
                 break;
-            case 'ArrowLeft': // codigo para movimentar o helicoptero
-                if (airborne)  {
-                    rotationInput += speed;
+            case 'ArrowLeft':
+                arrowLeft = true;
+                if (height > 0) {
+                    movement += speed;      // move the helicopter with a certain speed
                     if (speed < MAX_SPEED)
-                        speed += 0.5;
+                        speed += HELICOPTER_ACCELERATION;
+                    if (inclination < MAX_INCLINATION)
+                        inclination += HELICOPTER_INCLINATION;
                 }
+                break;
+            case ' ':
+                if (height > 0)
+                    boxes.push({ time: time, speed: speed, point: position });
                 break;
             case '1':
-                //axonometrica
+                // Axonometric
                 axonometricProjection = true;
                 break;
             case '2':
                 // Front view
-                mView = lookAt([0,0,1], [0,0,0], [0,1,0]);
+                mView = lookAt([0, 0, 1], [0, 0, 0], [0, 1, 0]);
                 axonometricProjection = false;
                 break;
             case '3':
                 // Top view
-                mView = lookAt([0,1,0],  [0,0,0], [0,0,-1]);
+                mView = lookAt([0, 1, 0], [0, 0, 0], [0, 0, -1]);
                 axonometricProjection = false;
                 break;
             case '4':
@@ -126,9 +123,9 @@ function setup(shaders) {
     }
     // para a caixa (n sei se se faz onkeyup ou onkeydown)
     document.body.onkeyup = function(event) {
-        if (event.code == "Space") {
+        /*if (event.code == "Space" && airborne) {
             boxes.push({time:time, speed:speed, point: helicopterPosition});
-        }
+        }*/
         // the helicopter cannot go down before being finishing going down
         /*if (event.code == "ArrowUp" && airborne == false && time - timeLanding > 1) {
             airborne = true;
@@ -138,10 +135,10 @@ function setup(shaders) {
         if (event.code == "ArrowDown" && airborne == true && time - timeTakeoff > 1) {
             airborne = false;
             timeLanding = time;
-        }
-        if (event.code == "ArrowLeft") {
-            // Codigo para abrandar o helicoptero
         }*/
+        if (event.code == "ArrowLeft")
+            arrowLeft = false;
+            // Codigo para abrandar o helicoptero
       }
 
 
@@ -374,9 +371,9 @@ function setup(shaders) {
     }
 
     function Plane() {
-        multScale([100,1,100]); //11  helicopteros em largura talvez(testar mais tarde?)
+        multScale([125,1,125]); // 125 = 5/2* WORLD_SCALE
 
-        let color = [42/255,41/255,34/255,1.0]; // 42, 41, 34 Asphalt
+        let color = [42/255,41/255,34/255,1.0]; // Asphalt
         
         setColor(color);
 
@@ -423,7 +420,6 @@ function setup(shaders) {
             if (time - b.time < 5) {
                 pushMatrix();
                     multTranslation(b.point);
-                    //1 = yBox/2 (NAO TENHO A  CERTEZA ACERCA DISTO)
                     //b.point[1] is the height at which the box was dropped
                     //1.5 = (yBox/2+yPlane/2)
                     if (b.speed < b.point[1]-1.5) {
@@ -443,10 +439,10 @@ function setup(shaders) {
 
     function World() {
         //Sun (EXPERIMENTAL)
-        //pushMatrix();
-            //multTranslation([0, 30,50]);    //30 = 3WORLD_SCALE/5, 50 = WORLD_SCALE
-            //Sun();
-        //popMatrix();
+        pushMatrix();
+            multTranslation([50, 30,0]);    // 50 = WORLD_SCALE, 30 = 3WORLD_SCALE/5
+            Sun();
+        popMatrix();
         //Plane  
         pushMatrix();
             multRotationY(45); //DESNECESSARIO PROVAVELMENTE
@@ -454,19 +450,13 @@ function setup(shaders) {
         popMatrix();
         //Helicopter
         pushMatrix();         
-            multRotationY(rotationInput); // movimento em torno de y do helicoptero
+            multRotationY(movement); // movimento em torno de y do helicoptero
             multTranslation([30,0.0,0.0]); // translaçao do helicoptero (o raio é 30)
             multTranslation([0,2.5+height,0.0]); //2.5 = ((yPlano/2) + (0.2*translaçao em y de landing gear) + (0.2*yLandingGear/2))
             multRotationY(-90);
-            /*if (airborne) {
-                speed = time-timeTakeoff > 1 ? 1 : time-timeTakeoff;
-                //multTranslation([0.0,12.5*y,0.0]);
-            }
-            else {
-                speed = 1-(time-timeLanding) < 0 ? 0 : 1-(time-timeLanding);
-            }*/
-            helicopterPosition = mModelPoint();
-            multScale([0.2,0.2,0.2]); // scale para por o helicoptero a ser 10m (ISTO NAO SAO 10 METROS)
+            position = mModelPoint();
+            multRotationZ(inclination);
+            multScale([0.2,0.2,0.2]);
             buildHelicopter();
         popMatrix();
         //Created boxes
@@ -475,8 +465,23 @@ function setup(shaders) {
 
 
     function render() {
-        if (animation) time += 1/60; //tava speed antes
+        if (animation) time += 1/60;
         window.requestAnimationFrame(render);
+
+        if (!arrowLeft) {
+          
+            if (speed > 0) {
+                speed -= HELICOPTER_ACCELERATION;
+                movement += speed;      
+            }
+
+                
+            if (inclination > 0)
+               inclination -= HELICOPTER_INCLINATION;
+        }
+        console.log(speed);
+        
+            
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
