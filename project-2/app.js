@@ -419,11 +419,13 @@ function setup(shaders) {
         for (const b of boxes) {
             if (time - b.time < 5) {
                 pushMatrix();
-                    multTranslation(b.point);
+                    multTranslation([b.point[0],b.point[1],b.point[2]]);
                     //b.point[1] is the height at which the box was dropped
                     //1.5 = (yBox/2+yPlane/2)
                     if (b.speed < b.point[1]-1.5) {
+                        //var position = 0;
                         multTranslation([0.0,-b.speed,0.0]);
+                        //b.point[1] += b.speed; //b.point[1] position Y of the box
                         b.speed+=(time-b.time)/EARTH_GRAVITY; // NAO SEI SE ESTA NECESSARIAMENTE CERTO E NAO TOMA EM CONTA A VELOCIDADE DA ANIMAÇAO AUMENTAR O QUE AINDA NAO SEI SE EXISTE
                     } 
                     else
@@ -433,7 +435,9 @@ function setup(shaders) {
 
                 popMatrix();
             }
-
+            //If a box has existed for more than 5 seconds it disappears
+            else 
+                boxes.shift();  // FIFO The box to disappear will always be the earliest dropped
         } 
     }
 
@@ -454,8 +458,8 @@ function setup(shaders) {
             multTranslation([30,0.0,0.0]); // translaçao do helicoptero (o raio é 30)
             multTranslation([0,2.5+height,0.0]); //2.5 = ((yPlano/2) + (0.2*translaçao em y de landing gear) + (0.2*yLandingGear/2))
             multRotationY(-90);
-            position = mModelPoint();
             multRotationZ(inclination);
+            position = mModelPoint();
             multScale([0.2,0.2,0.2]);
             buildHelicopter();
         popMatrix();
@@ -478,10 +482,7 @@ function setup(shaders) {
                 
             if (inclination > 0)
                inclination -= HELICOPTER_INCLINATION;
-        }
-        console.log(speed);
-        
-            
+        }               
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
