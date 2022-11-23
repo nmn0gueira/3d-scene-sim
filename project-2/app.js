@@ -491,7 +491,7 @@ function setup(shaders) {
     function buildingBase(){
         multScale([75,20,125/6]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
 
-        let color = [0.0,0.68,0.38,1.0]; 
+        let color = [0.98,0.68,0.38,1.0]; 
         
         setColor(color);
 
@@ -538,8 +538,30 @@ function setup(shaders) {
         CUBE.draw(gl, program, mode);
 
     }
+    function buildingPilar1(){
+        multScale([3,40,3]);  // 40=building center height
 
+        let color = [0.93,0.87,0.81,1.0]; 
+        
+        setColor(color);
 
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
+    function buildingPilar2(){
+        multScale([3,40,3]); // 40=building center height
+
+        let color = [0.93,0.87,0.81,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
 
 
     //trees
@@ -706,6 +728,19 @@ function setup(shaders) {
             //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
             buildingDoors();
         popMatrix();   
+
+
+        pushMatrix();
+            multRotationY(45);
+            multTranslation([125/2-25,40/2+0.1,25/2]);
+            pushMatrix();
+                buildingPilar1();
+            popMatrix();
+            multTranslation([0,0,-25]);
+            pushMatrix();
+                buildingPilar2();
+            popMatrix();
+        popMatrix();
         
         
         //trees
