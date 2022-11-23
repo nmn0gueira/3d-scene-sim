@@ -679,8 +679,8 @@ function setup(shaders) {
 
             //bench
             pushMatrix();
+                multTranslation([5+1,0.7,50]);
                 pushMatrix();
-                    multTranslation([5+1,0.7,50]);
                     benchLeg1();
                 popMatrix();
                 pushMatrix();
@@ -688,12 +688,12 @@ function setup(shaders) {
                     benchLeg2();
                 popMatrix();
                 pushMatrix();
-                    multTranslation([0,0.6/2,3/2]);
+                    multTranslation([0,0.6/2,3/2-3]);
                     benchSeat();
                 popMatrix();
                 pushMatrix();
                     multRotationZ(-90);
-                    multTranslation([-3/2+0.5/2,3/2,0])
+                    multTranslation([-3/2+0.5/2,3/2 + 0.6/2, 0 + (2 - 3)])
                     benchBackrest();
                 popMatrix();
             popMatrix();
