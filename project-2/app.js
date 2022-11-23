@@ -657,7 +657,7 @@ function setup(shaders) {
         
         //SURFACE  
         pushMatrix();
-            multRotationY(45);
+            multRotationY(-45);
             pushMatrix();
                 Plane();        //PLANE
             popMatrix();
