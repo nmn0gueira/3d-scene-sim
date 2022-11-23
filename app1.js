@@ -653,134 +653,140 @@ function setup(shaders) {
         //    multTranslation([50, 30,0]);    // 50 = WORLD_SCALE, 30 = 3WORLD_SCALE/5
         //    Sun();
         //popMatrix();
-
-        
-        //SURFACE  
+        //Plane  
         pushMatrix();
-            multRotationY(-45);
-            pushMatrix();
-                Plane();        //PLANE
-            popMatrix();
-
-            //enviroment 
-            //ps pode ser melhorado como foi feto com as outras primitivas
-            pushMatrix();   
-                lake();         //LAKE
-            popMatrix();
-            /*
-            pushMatrix();
-                lakeHolder();   //LAKE HOLDER
-            popMatrix();
-            */
-            pushMatrix();
-                circularPavement(); //CIRCULAR PAVEMENT
-            popMatrix();
-            pushMatrix();
-                pavement();         // PAVEMENT
-            popMatrix();
-
-
-            //bench (REVER ISTO MAIS TARDE)
-            pushMatrix();
-                multTranslation([5+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
-                //0.7 para ficar com parte da altura "entrreada no Plane", 50 valor random para ficar quase no limite do plane
-                pushMatrix();
-                    benchLeg1();
-                popMatrix();
-                pushMatrix();
-                    multTranslation([0,0,-3]);  // para ficar a 3 de distancia
-                    benchLeg2();
-                popMatrix();
-                pushMatrix();
-                    multTranslation([0,0.5/2,3/2-3]); //0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
-                    benchSeat();
-                popMatrix();
-                pushMatrix();
-                    multRotationZ(-90);
-                    multTranslation([-3/2+0.5/2,3/2 + 0.5/2, 0 + (2 - 3)]) //x = -3/2+0.5/2, y = width/2 + altura/2 do benchBackrest para posicionar + translaçao y do banco, z = translaçao z do banco
-                    benchBackrest();
-                popMatrix();
-            popMatrix();
-        
-
-        //building
-            pushMatrix();
-                multTranslation([0, 20 / 2, -52]); // 20/2=buildingBase height/2 para subir,52=125/2(half Plane)-125/6/2(half buildingbase width)
-                buildingBase();
-            popMatrix();
-
-            pushMatrix();
-                multTranslation([0, 40 / 2, -50]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
-                buildingCenter();
-            popMatrix();
-
-
-            pushMatrix();
-                multTranslation([0, 12.5 / 2, -125 / 2 + 25]); //12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
-                buildingEntrance();
-            popMatrix();
-
-            pushMatrix();
-                multTranslation([0, 12.5 / 6, -125/2 + 25 + 5/2 -0.4 ]);
-                //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
-                buildingDoors();
-            popMatrix();  
-
-            pushMatrix();
-                multTranslation([125/2-25,40/2+0.1,25/2]);
-                pushMatrix();
-                    buildingPilar1();
-                popMatrix();
-                multTranslation([0,0,-25]);
-                pushMatrix();
-                    buildingPilar2();
-                popMatrix();
-            popMatrix();
-
-
-            //trees
-            pushMatrix();
-                multTranslation([50,5/2,25]); // 5/2=halfTrunk height, outros valores sao random
-                pushMatrix();
-                    treeTrunk1();
-                popMatrix();
-                multTranslation([0,7/2,0]); // 7/2=halfLeaves height
-                pushMatrix();
-                    treeLeaves1();
-                popMatrix();
-            popMatrix();
-
-
-            pushMatrix();
-                multTranslation([-40,5/2,-30]); //5/2=halfTrunk height, outros valores sao random
-                pushMatrix();
-                    treeTrunk2();
-                popMatrix();
-                multTranslation([0,7/2,0]); //7/2=halfLeaves height
-                pushMatrix();
-                    treeLeaves2();
-                popMatrix();
-            popMatrix();
-
-    
-            pushMatrix();
-                multTranslation([-60,9/2,0]); //valores random, exceto 9/2=halfTrunk height
-                pushMatrix();
-                    pineTrunk();
-                popMatrix();
-                multTranslation([0,20/2+9/2-0.1,0]);
-                //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
-                pushMatrix();
-                    pineLeaves();
-                popMatrix();
-            popMatrix();
-
+            multRotationY(45); //DESNECESSARIO PROVAVELMENTE
+            Plane();
         popMatrix();
 
-   
+        //enviroment 
+        //ps pode ser melhorado como foi feto com as outras primitivas
+        pushMatrix();   
+            lake();
+        popMatrix();
+
+/*
+        pushMatrix();
+            lakeHolder();
+        popMatrix();
+        */
+
+        pushMatrix();
+            circularPavement();
+        popMatrix();
+
+        pushMatrix();
+            multRotationY(45);// isto porque para o plane foi feito o mesmo
+            pavement();
+        popMatrix();
+        //bench
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([5+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
+            //0.7 para ficar com parte da altura "entrreada no Plane", 50 valor random para ficar quase no limite do plane
+                pushMatrix();
+                benchLeg1();
+                popMatrix();
+            multTranslation([0,0,-3]);// para ficar a 3 de distancia
+                pushMatrix();
+                benchLeg2();
+                popMatrix();
+            multTranslation([0,0.5/2,3/2]);//0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
+                pushMatrix();
+                benchSeat();
+                popMatrix();
+            multRotationZ(-90);
+            multTranslation([-3/2+0.5/2,3/2,0]);//-3/2+0.5=benchSeat width/2 + altura/2 do benchBackrest para posicionar 
+                pushMatrix();
+                benchBackrest();
+                popMatrix();
+        popMatrix();
+
+        //building
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,20/2,-52]);//20/2=buildingBase height/2 para subir,52=125/2(half Plane)-125/6/2(half buildingbase width)
+            buildingBase();
+        popMatrix();
+
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,40/2,-50]);//40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
+            buildingCenter();
+        popMatrix();
+
+
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,12.5/2,-125/2+25]);//12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
+            buildingEntrance();
+        popMatrix();
+
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,12.5/6,-125/2 + 25 + 5/2 -0.4 ]);
+            //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
+            buildingDoors();
+        popMatrix();   
+
+
+        pushMatrix();
+            multRotationY(45);
+            multTranslation([125/2-25,40/2+0.1,25/2]);
+            pushMatrix();
+                buildingPilar1();
+            popMatrix();
+            multTranslation([0,0,-25]);
+            pushMatrix();
+                buildingPilar2();
+            popMatrix();
+        popMatrix();
+        
+        
+        //trees
+        pushMatrix();
+            multTranslation([50,5/2,25]);//5/2=halfTrunk height, outros valores sao random
+                pushMatrix();
+                     treeTrunk1();
+                popMatrix();
+                     multTranslation([0,7/2,0]);//7/2=halfLeaves height
+                     pushMatrix();
+                     treeLeaves1();
+                popMatrix();
+        popMatrix();
+
+
+
+        pushMatrix();
+            multTranslation([-40,5/2,-30]);//5/2=halfTrunk height, outros valores sao random
+                pushMatrix();
+                     treeTrunk2();
+                popMatrix();
+                
+                     multTranslation([0,7/2,0]);//7/2=halfLeaves height
+                     pushMatrix();
+                     treeLeaves2();
+                popMatrix();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-60,9/2,0]);//valores random, exceto 9/2=halfTrunk height
+            pushMatrix();
+                 pineTrunk();
+            popMatrix();
+            
+                 multTranslation([0,20/2+9/2-0.1,0]);
+                 //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+                 pushMatrix();
+                 pineLeaves();
+            popMatrix();
+    popMatrix();
         
 
 
+
+
+        
         //Helicopter
         pushMatrix();         
             multRotationY(movement); // movimento em torno de y do helicoptero
