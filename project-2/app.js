@@ -18,8 +18,7 @@ let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
 let animation = true;   // Animation is running
 let objectProps = {gamma:0, theta:0};
 let axonometricProjection = true; // the program starts with axonometric projection
-let arrowLeft = false;
-let keys = {};
+let keysPressed = [];
 
 const WORLD_SCALE = 50; 
 const EARTH_GRAVITY = 9.8;
@@ -58,91 +57,10 @@ function setup(shaders) {
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
 
-    document.onkeydown = function (event) {
-        switch (event.key) {
-            case 'w':
-                mode = gl.LINES;
-                break;
-            case 's':
-                mode = gl.TRIANGLES;
-                break;
-            case 'p':
-                animation = !animation;
-                break;
-            case 'ArrowUp':
-                //fazer com que so levante voo apos rodar as helices com uma certa velocidade
-                if (height < MAX_HEIGHT) {
-                    height += 0.5;
-                }
-                break;
-            case 'ArrowDown':
-                if (height > 0) {
-                    height -= 0.5;
-                }
-                break;
-            case 'ArrowLeft':
-                arrowLeft = true;
-                if (height > 0) {
-                    movement += speed;      // move the helicopter with a certain speed
-                    if (speed < MAX_SPEED)
-                        speed += HELICOPTER_ACCELERATION;
-                    if (inclination < MAX_INCLINATION)
-                        inclination += HELICOPTER_INCLINATION;
-                }
-                break;
-            case ' ':
-                if (height > 0)
-                    boxes.push({ time: time, speed: speed, point: position });
-                break;
-            case '1':
-                // Axonometric
-                axonometricProjection = true;
-                break;
-            case '2':
-                // Front view
-                mView = lookAt([0, 0, 1], [0, 0, 0], [0, 1, 0]);
-                axonometricProjection = false;
-                break;
-            case '3':
-                // Top view
-                mView = lookAt([0, 1, 0], [0, 0, 0], [0, 0, -1]);
-                axonometricProjection = false;
-                break;
-            case '4':
-                // Right view
-                mView = lookAt([1, 0, 0], [0, 0, 0], [0, 1, 0]);
-                axonometricProjection = false;
-                break;
-            /*case '5':
-                mView = lookAt(helicopterPosition, [0, 0, 0], [0, 1, 0]);
-                axonometricProjection = false;
-                break;*/
-            case 'k':
-                //regressa ao normal, nao e para o trabalho, so para ajudar
-                mView = lookAt([0, WORLD_SCALE, WORLD_SCALE], [0, 0, 0], [0, 1, 0]);
-                break;
-        }
+    document.onkeydown = onkeyup = function (event) {
+        keysPressed[event.key] = event.type == 'keydown';
+        
     }
-    // para a caixa (n sei se se faz onkeyup ou onkeydown)
-    document.body.onkeyup = function(event) {
-        /*if (event.code == "Space" && airborne) {
-            boxes.push({time:time, speed:speed, point: helicopterPosition});
-        }*/
-        // the helicopter cannot go down before being finishing going down
-        /*if (event.code == "ArrowUp" && airborne == false && time - timeLanding > 1) {
-            airborne = true;
-            timeTakeoff = time;
-        }
-        // the helicopter cannot go down before being finishing going up
-        if (event.code == "ArrowDown" && airborne == true && time - timeTakeoff > 1) {
-            airborne = false;
-            timeLanding = time;
-        }*/
-        if (event.code == "ArrowLeft")
-            arrowLeft = false;
-            // Codigo para abrandar o helicoptero
-      }
-
 
     gl.clearColor(135/255, 206/255, 235/255, 1.0); // 135, 206, 235 Sky
     SPHERE.init(gl);
@@ -851,17 +769,89 @@ function setup(shaders) {
         if (animation) time += 1/60;
         window.requestAnimationFrame(render);
 
-        if (!arrowLeft) {
-          
-            if (speed > 0) {
-                speed -= HELICOPTER_ACCELERATION;
-                movement += speed;      
+        // To execute commands of pressed keys
+        for (let k in keysPressed) {
+            if (keysPressed[k]) {   // Key is pressed
+                switch (k) {
+                    case 'w':
+                        mode = gl.LINES;
+                        break;
+                    case 's':
+                        mode = gl.TRIANGLES;
+                        break;
+                    case 'p':
+                        animation = !animation;
+                        break;
+                    case 'ArrowUp':
+                        //fazer com que so levante voo apos rodar as helices com uma certa velocidade
+                        if (height < MAX_HEIGHT) {
+                            height += 0.5;
+                        }
+                        break;
+                    case 'ArrowDown':
+                        if (height > 0) {
+                            height -= 0.5;
+                        }
+                        break;
+                    case 'ArrowLeft':
+                        if (height > 0) {
+                            movement += speed;      // move the helicopter with a certain speed
+                            if (speed < MAX_SPEED)
+                                speed += HELICOPTER_ACCELERATION;
+                            if (inclination < MAX_INCLINATION)
+                                inclination += HELICOPTER_INCLINATION;
+                        }
+                        break;
+                    case ' ':
+                        if (height > 0)
+                            boxes.push({ time: time, speed: speed, point: position });
+                        break;
+                    case '1':
+                        // Axonometric
+                        axonometricProjection = true;
+                        break;
+                    case '2':
+                        // Front view
+                        mView = lookAt([0, 0, 1], [0, 0, 0], [0, 1, 0]);
+                        axonometricProjection = false;
+                        break;
+                    case '3':
+                        // Top view
+                        mView = lookAt([0, 1, 0], [0, 0, 0], [0, 0, -1]);
+                        axonometricProjection = false;
+                        break;
+                    case '4':
+                        // Right view
+                        mView = lookAt([1, 0, 0], [0, 0, 0], [0, 1, 0]);
+                        axonometricProjection = false;
+                        break;
+                    /*case '5':
+                        mView = lookAt(helicopterPosition, [0, 0, 0], [0, 1, 0]);
+                        axonometricProjection = false;
+                        break;*/
+                    case 'k':
+                        //regressa ao normal, nao e para o trabalho, so para ajudar
+                        mView = lookAt([0, WORLD_SCALE, WORLD_SCALE], [0, 0, 0], [0, 1, 0]);
+                        break;
+                }
             }
+            else //Key is not pressed
+                /*
+                 * If ArrowLeft is being pressed and the helicopter descends to ground level 
+                 * the landing will be adjusted as well
+                */
+                if (k == 'ArrowLeft' || height == 0) {
+                    if (speed > 0) {
+                        speed -= HELICOPTER_ACCELERATION;
+                        movement += speed;
+                    }
 
-                
-            if (inclination > 0)
-               inclination -= HELICOPTER_INCLINATION;
-        }               
+
+                    if (inclination > 0)
+                        inclination -= HELICOPTER_INCLINATION;
+                }
+
+        }             
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
