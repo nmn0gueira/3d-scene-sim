@@ -677,7 +677,7 @@ function setup(shaders) {
             popMatrix();
 
 
-            //bench
+            //bench (REVER ISTO MAIS TARDE)
             pushMatrix();
                 multTranslation([5+1,0.7,50]);
                 pushMatrix();
