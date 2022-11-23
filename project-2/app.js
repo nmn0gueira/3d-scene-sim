@@ -378,10 +378,10 @@ function setup(shaders) {
     //enviroment
 // ps para as cores usei um site, https://antongerdelan.net/colour/
     function lake(){
-        multScale([10,0.5,10]);  // 10 = WORLD_SCALE/5
+        multScale([10,0.5,10]);  // 10 = WORLD_SCALE/5 , 0.5 para ter alguma grossura
     
         multTranslation([0,0.7,0]);// tem que se elevar um bocadinho para aparecer. 0,04= 2*elevaçao do pavement
-        let color = [0.0,0.51,0.91,1.0]; // Color of the sun
+        let color = [0.0,0.51,0.91,1.0]; 
         
         setColor(color);
 
@@ -407,7 +407,7 @@ function setup(shaders) {
 
     }*/
     function circularPavement(){
-        multScale([25,0.5,25]);  // 10 = WORLD_SCALE/5
+        multScale([25,0.5,25]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
     
         multTranslation([0,0.6,0]); //tem que se elevar um pouco para aparecer
         let color = [0.78,0.78,0.78,1.0]; 
@@ -421,7 +421,7 @@ function setup(shaders) {
     }
 
     function pavement(){
-        multScale([125,0.5,10]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([125,0.5,10]);  // 125 = plane size, 10=* WORLD_SCALE/5, o.5 para ter alguma grossura
 
         multTranslation([0,0.6,0]); //tem que se elevar um pouco para aparecer
         let color = [0.78,0.78,0.78,1.0]; 
@@ -436,7 +436,8 @@ function setup(shaders) {
 //bench
 //O BENCH PROVAVELMENTE TEM QUE SE REDUZIR DE TAMANHO
     function benchLeg1(){
-        multScale([2,0.7,0.5]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli, 
+        //exceto 0.7 que e para ter alguma parte que fique dentro do plane
 
         let color = [0.0,0.0,0.0,1.0]; 
         
@@ -449,8 +450,8 @@ function setup(shaders) {
 
     }
     function benchLeg2(){
-        multScale([2,0.7,0.5]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
-
+        multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli
+//exceto 0.7 que e para ter alguma parte que fique dentro do plane
   
         let color = [0.0,0.0,0.0,1.0]; 
         
@@ -462,7 +463,7 @@ function setup(shaders) {
     }
 
     function benchSeat(){
-        multScale([3,0.5,6]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([3,0.5,6]);  //tamanhos random, pequenos para serem menor que o heli,  
 
         //tem que se elevar um pouco para aparecer
         let color = [1.0,0.0,0.0,1.0]; 
@@ -474,7 +475,7 @@ function setup(shaders) {
         CUBE.draw(gl, program, mode);
     }
     function benchBackrest(){
-        multScale([3,0.5,6]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([3,0.5,6]); //mesmos tamanhos que o benchSeat
 
         let color = [1.0,0.0,0.0,1.0]; 
         
@@ -488,7 +489,7 @@ function setup(shaders) {
     //building
 
     function buildingBase(){
-        multScale([75,20,125/6]);  // 50 = WORLD_SCALE  , 13=WORLD_SCALE/4 ,100=Plane size
+        multScale([75,20,125/6]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
 
         let color = [0.0,0.68,0.38,1.0]; 
         
@@ -501,7 +502,7 @@ function setup(shaders) {
     }
     function buildingCenter(){
 
-        multScale([125/5,40,25]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+        multScale([125/5,40,25]);  // 125/5= para ter 1/5 do tamanho do PLANE, 40 valor escolhido para altura  , 25= WORLD_SCALE/2
 
         let color = [0.98,0.68,0.38,1.0]; 
         
@@ -514,7 +515,7 @@ function setup(shaders) {
     }
     function buildingEntrance(){
         
-        multScale([12.5,12.5,5]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+        multScale([12.5,12.5,5]);  // 12.5=WORLD_SCALE/4 ,5= Building center width/5
 
         let color = [0.93,0.87,0.81,1.0]; 
         
@@ -526,7 +527,7 @@ function setup(shaders) {
     }
 
     function buildingDoors(){
-        multScale([12.5/3,12.5/3,2]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+        multScale([12.5/3,12.5/3,1]);  // 12.5/3 para ter 1/3 do comprimento e altura da entrance , 1 para ter alguma grossura
 
         let color = [0.63,0.36,0.10,1.0]; 
         
@@ -659,20 +660,21 @@ function setup(shaders) {
         //bench
         pushMatrix();
             multRotationY(-45);
-            multTranslation([5+1,0.7,50]);
+            multTranslation([5+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
+            //0.7 para ficar com parte da altura "entrreada no Plane", 50 valor random para ficar quase no limite do plane
                 pushMatrix();
                 benchLeg1();
                 popMatrix();
-            multTranslation([0,0,-3]);
+            multTranslation([0,0,-3]);// para ficar a 3 de distancia
                 pushMatrix();
                 benchLeg2();
                 popMatrix();
-            multTranslation([0,0.6/2,3/2]);
+            multTranslation([0,0.5/2,3/2]);//0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
                 pushMatrix();
                 benchSeat();
                 popMatrix();
             multRotationZ(-90);
-            multTranslation([-3/2+0.5/2,3/2,0])
+            multTranslation([-3/2+0.5/2,3/2,0]);//-3/2+0.5=benchSeat width/2 + altura/2 do benchBackrest para posicionar 
                 pushMatrix();
                 benchBackrest();
                 popMatrix();
@@ -681,37 +683,38 @@ function setup(shaders) {
         //building
         pushMatrix();
             multRotationY(-45);
-            multTranslation([0,20/2,-52]);//6 =altura da base/2, 42 = WORLD_SCALE - LARGURA DA BASE do edificio/2
+            multTranslation([0,20/2,-52]);//20/2=buildingBase height/2 para subir,52=125/2(half Plane)-125/6/2(half buildingbase width)
             buildingBase();
         popMatrix();
 
         pushMatrix();
             multRotationY(-45);
-            multTranslation([0,40/2,-50]);
+            multTranslation([0,40/2,-50]);//40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
             buildingCenter();
         popMatrix();
 
 
         pushMatrix();
             multRotationY(-45);
-            multTranslation([0,12.5/2,-125/2+25]);
+            multTranslation([0,12.5/2,-125/2+25]);//12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
             buildingEntrance();
         popMatrix();
 
         pushMatrix();
             multRotationY(-45);
-            multTranslation([0,12.5/6,-125/2+(25+12.5/2)-4.6]);
+            multTranslation([0,12.5/6,-125/2 + 25 + 5/2 -0.4 ]);
+            //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
             buildingDoors();
         popMatrix();   
         
         
         //trees
         pushMatrix();
-            multTranslation([50,5/2,25]);
+            multTranslation([50,5/2,25]);//5/2=halfTrunk height, outros valores sao random
                 pushMatrix();
                      treeTrunk1();
                 popMatrix();
-                     multTranslation([0,7/2,0]);
+                     multTranslation([0,7/2,0]);//7/2=halfLeaves height
                      pushMatrix();
                      treeLeaves1();
                 popMatrix();
@@ -720,24 +723,25 @@ function setup(shaders) {
 
 
         pushMatrix();
-            multTranslation([-40,5/2,-30]);
+            multTranslation([-40,5/2,-30]);//5/2=halfTrunk height, outros valores sao random
                 pushMatrix();
                      treeTrunk2();
                 popMatrix();
                 
-                     multTranslation([0,7/2,0]);
+                     multTranslation([0,7/2,0]);//7/2=halfLeaves height
                      pushMatrix();
                      treeLeaves2();
                 popMatrix();
         popMatrix();
 
         pushMatrix();
-        multTranslation([-60,9/2,0]);
+        multTranslation([-60,9/2,0]);//valores random, exceto 9/2=halfTrunk height
             pushMatrix();
                  pineTrunk();
             popMatrix();
             
                  multTranslation([0,20/2+9/2-0.1,0]);
+                 //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
                  pushMatrix();
                  pineLeaves();
             popMatrix();
