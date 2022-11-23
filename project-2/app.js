@@ -630,124 +630,122 @@ function setup(shaders) {
         //    multTranslation([50, 30,0]);    // 50 = WORLD_SCALE, 30 = 3WORLD_SCALE/5
         //    Sun();
         //popMatrix();
-        //Plane  
-        pushMatrix();
-            multRotationY(45); //DESNECESSARIO PROVAVELMENTE
-            Plane();
-        popMatrix();
 
-        //enviroment 
+        
+        //SURFACE  
+        pushMatrix();
+            multRotationY(45);
+            pushMatrix();
+                Plane();        //PLANE
+            popMatrix();
+            pushMatrix();   
+                lake();         //LAKE
+            popMatrix();
+            /*
+            pushMatrix();
+                lakeHolder();   //LAKE HOLDER
+            popMatrix();
+            */
+            pushMatrix();
+                circularPavement(); //CIRCULAR PAVEMENT
+            popMatrix();
+            pushMatrix();
+                pavement();         // PAVEMENT
+            popMatrix();
+
+
+            //bench
+            pushMatrix();
+                multTranslation([5+1,0.7,50]);
+                pushMatrix();
+                    benchLeg1();
+                popMatrix();
+                multTranslation([0,0,-3]);
+                pushMatrix();
+                    benchLeg2();
+                popMatrix();
+                multTranslation([0,0.6/2,3/2]);
+                pushMatrix();
+                    benchSeat();
+                popMatrix();
+                multRotationZ(-90);
+                multTranslation([-3/2+0.5/2,3/2,0])
+                pushMatrix();
+                    benchBackrest();
+                popMatrix();
+            popMatrix();
+
+            //enviroment 
         //ps pode ser melhorado como foi feto com as outras primitivas
-        pushMatrix();   
-            lake();
-        popMatrix();
 
-/*
-        pushMatrix();
-            lakeHolder();
-        popMatrix();
-        */
-
-        pushMatrix();
-            circularPavement();
-        popMatrix();
-
-        pushMatrix();
-            multRotationY(45);// isto porque para o plane foi feito o mesmo
-            pavement();
-        popMatrix();
-        //bench
-        pushMatrix();
-            multRotationY(-45);
-            multTranslation([5+1,0.7,50]);
-                pushMatrix();
-                benchLeg1();
-                popMatrix();
-            multTranslation([0,0,-3]);
-                pushMatrix();
-                benchLeg2();
-                popMatrix();
-            multTranslation([0,0.6/2,3/2]);
-                pushMatrix();
-                benchSeat();
-                popMatrix();
-            multRotationZ(-90);
-            multTranslation([-3/2+0.5/2,3/2,0])
-                pushMatrix();
-                benchBackrest();
-                popMatrix();
-        popMatrix();
+        
 
         //building
-        pushMatrix();
-            multRotationY(-45);
-            multTranslation([0,20/2,-52]);//6 =altura da base/2, 42 = WORLD_SCALE - LARGURA DA BASE do edificio/2
-            buildingBase();
-        popMatrix();
-
-        pushMatrix();
-            multRotationY(-45);
-            multTranslation([0,40/2,-50]);
-            buildingCenter();
-        popMatrix();
-
-
-        pushMatrix();
-            multRotationY(-45);
-            multTranslation([0,12.5/2,-125/2+25]);
-            buildingEntrance();
-        popMatrix();
-
-        pushMatrix();
-            multRotationY(-45);
-            multTranslation([0,12.5/6,-125/2+(25+12.5/2)-4.6]);
-            buildingDoors();
-        popMatrix();   
-        
-        
-        //trees
-        pushMatrix();
-            multTranslation([50,5/2,25]);
-                pushMatrix();
-                     treeTrunk1();
-                popMatrix();
-                     multTranslation([0,7/2,0]);
-                     pushMatrix();
-                     treeLeaves1();
-                popMatrix();
-        popMatrix();
-
-
-
-        pushMatrix();
-            multTranslation([-40,5/2,-30]);
-                pushMatrix();
-                     treeTrunk2();
-                popMatrix();
-                
-                     multTranslation([0,7/2,0]);
-                     pushMatrix();
-                     treeLeaves2();
-                popMatrix();
-        popMatrix();
-
-        pushMatrix();
-        multTranslation([-60,9/2,0]);
             pushMatrix();
-                 pineTrunk();
+                multTranslation([0, 20 / 2, -52]);//6 =altura da base/2, 42 = WORLD_SCALE - LARGURA DA BASE do edificio/2
+                buildingBase();
             popMatrix();
-            
-                 multTranslation([0,20/2+9/2-0.1,0]);
-                 pushMatrix();
-                 pineLeaves();
+
+            pushMatrix();
+                multTranslation([0, 40 / 2, -50]);
+                buildingCenter();
             popMatrix();
-    popMatrix();
+
+
+            pushMatrix();
+                multTranslation([0, 12.5 / 2, -125 / 2 + 25]);
+                buildingEntrance();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([0, 12.5 / 6, -125 / 2 + (25 + 12.5 / 2) - 4.6]);
+                buildingDoors();
+            popMatrix();  
+
+
+
+            //trees
+            pushMatrix();
+                multTranslation([50,5/2,25]);
+                pushMatrix();
+                    treeTrunk1();
+                popMatrix();
+                multTranslation([0,7/2,0]);
+                pushMatrix();
+                    treeLeaves1();
+                popMatrix();
+            popMatrix();
+
+
+            pushMatrix();
+                multTranslation([-40,5/2,-30]);
+                pushMatrix();
+                    treeTrunk2();
+                popMatrix();
+                multTranslation([0,7/2,0]);
+                pushMatrix();
+                    treeLeaves2();
+                popMatrix();
+            popMatrix();
+
+    
+            pushMatrix();
+                multTranslation([-60,9/2,0]);
+                pushMatrix();
+                    pineTrunk();
+                popMatrix();
+                multTranslation([0,20/2+9/2-0.1,0]);
+                pushMatrix();
+                    pineLeaves();
+                popMatrix();
+            popMatrix();
+
+        popMatrix();
+
+   
         
 
 
-
-
-        
         //Helicopter
         pushMatrix();         
             multRotationY(movement); // movimento em torno de y do helicoptero
