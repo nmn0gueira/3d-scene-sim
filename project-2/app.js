@@ -5,6 +5,8 @@ import { modelView, loadMatrix, multRotationX, multRotationZ, multRotationY, mul
 import * as SPHERE from '../../libs/objects/sphere.js';
 import * as CUBE from '../../libs/objects/cube.js'
 import * as CYLINDER from '../../libs/objects/cylinder.js'
+import * as TORUS from '../../libs/objects/torus.js'
+import * as PYRAMID from '../../libs/objects/pyramid.js'
 import { GUI } from "../libs/dat.gui.module.js";
 
 
@@ -146,6 +148,8 @@ function setup(shaders) {
     SPHERE.init(gl);
     CUBE.init(gl);
     CYLINDER.init(gl);
+    TORUS.init(gl);
+    PYRAMID.init(gl);
     gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
 
     window.requestAnimationFrame(render);
@@ -373,7 +377,8 @@ function setup(shaders) {
     function Plane() {
         multScale([125,1,125]); // 125 = 5/2* WORLD_SCALE
 
-        let color = [42/255,41/255,34/255,1.0]; // Asphalt
+        let color =[0.26,1.0, 0.02,1.0]
+        //let color = [42/255,41/255,34/255,1.0]; // 42, 41, 34 Asphalt
         
         setColor(color);
 
@@ -385,7 +390,7 @@ function setup(shaders) {
     function box() {
         multScale([4,2,1]); //20/5 10/5 5/5
 
-        let color = [0.0,1.0,0.0,1.0]; // Green
+        let color = [0.66,0.41,0.28,1.0]; // Green
         
         setColor(color);
 
@@ -407,7 +412,7 @@ function setup(shaders) {
         SPHERE.draw(gl, program, mode);
     }
 
-    function mModelPoint() {
+    function  mModelPoint() {
         let mModel = mult(inverse(mView), modelView()); // se n for assim é ao contrario
         let point = mult(mModel, vec4(0.0,0.0,0.0,1.0));
         
@@ -441,6 +446,263 @@ function setup(shaders) {
         } 
     }
 
+
+
+
+
+
+
+
+
+    //enviroment
+// ps para as cores usei um site, https://antongerdelan.net/colour/
+    function lake(){
+        multScale([10,0.5,10]);  // 10 = WORLD_SCALE/5
+    
+        multTranslation([0,0.7,0]);// tem que se elevar um bocadinho para aparecer. 0,04= 2*elevaçao do pavement
+        let color = [0.0,0.51,0.91,1.0]; // Color of the sun
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CYLINDER.draw(gl, program, mode);
+        
+
+    }
+    //ver isto
+    /*
+    function lakeHolder(){
+        multScale([12,2,12]);  // 10 = WORLD_SCALE/5
+    
+        multTranslation([0,0.7,0]);// tem que se elevar um bocadinho para aparecer. 0,04= 2*elevaçao do pavement
+        let color = [0.25,0.25,0.25,1.0]; // Color of the sun
+        
+        setColor(color);
+
+        uploadModelView();
+
+        TORUS.draw(gl, program, mode);
+
+    }*/
+    function circularPavement(){
+        multScale([25,0.5,25]);  // 10 = WORLD_SCALE/5
+    
+        multTranslation([0,0.6,0]); //tem que se elevar um pouco para aparecer
+        let color = [0.78,0.78,0.78,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CYLINDER.draw(gl, program, mode);
+
+    }
+
+    function pavement(){
+        multScale([125,0.5,10]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+
+        multTranslation([0,0.6,0]); //tem que se elevar um pouco para aparecer
+        let color = [0.78,0.78,0.78,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
+//bench
+//O BENCH PROVAVELMENTE TEM QUE SE REDUZIR DE TAMANHO
+    function benchLeg1(){
+        multScale([2,0.7,0.5]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+
+        let color = [0.0,0.0,0.0,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+
+    }
+    function benchLeg2(){
+        multScale([2,0.7,0.5]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+
+  
+        let color = [0.0,0.0,0.0,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+    }
+
+    function benchSeat(){
+        multScale([3,0.5,6]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+
+        //tem que se elevar um pouco para aparecer
+        let color = [1.0,0.0,0.0,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+    }
+    function benchBackrest(){
+        multScale([3,0.5,6]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+
+        let color = [1.0,0.0,0.0,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+    }
+
+    //building
+
+    function buildingBase(){
+        multScale([75,20,125/6]);  // 50 = WORLD_SCALE  , 13=WORLD_SCALE/4 ,100=Plane size
+
+        let color = [0.0,0.68,0.38,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
+    function buildingCenter(){
+
+        multScale([125/5,40,25]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+
+        let color = [0.98,0.68,0.38,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
+    function buildingEntrance(){
+        
+        multScale([12.5,12.5,5]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+
+        let color = [0.93,0.87,0.81,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+    }
+
+    function buildingDoors(){
+        multScale([12.5/3,12.5/3,2]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+
+        let color = [0.63,0.36,0.10,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
+
+
+
+
+    //trees
+     function treeTrunk1(){
+        multScale([1,5,1]);  // random
+
+        let color = [0.32,0.17,0.03,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CYLINDER.draw(gl, program, mode);
+
+     }
+     function treeLeaves1(){
+        multScale([7,7,7]);  // random
+
+        let color = [0.02,0.67,0.06,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        SPHERE.draw(gl, program, mode);
+
+
+     }
+
+     function treeTrunk2(){
+        multScale([1,5,1]);  // random
+
+        let color = [0.52,0.24,0.01,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CYLINDER.draw(gl, program, mode);
+     }
+
+     function treeLeaves2(){
+        multScale([7,7,7]);  // random
+
+        let color = [0.51,0.81,0.42,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        SPHERE.draw(gl, program, mode);
+
+
+     }
+
+     function pineTrunk(){
+        multScale([3,9,3]);  // random
+
+        let color = [0.52,0.24,0.01,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CYLINDER.draw(gl, program, mode);
+        
+     }
+
+     function pineLeaves(){
+        multScale([10,20,10]);  // random
+
+        let color = [0.03,0.31,0.05,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        PYRAMID.draw(gl, program, mode);
+
+
+     }
+
+    
+
+
     function World() {
         //Sun (EXPERIMENTAL)
         pushMatrix();
@@ -452,6 +714,119 @@ function setup(shaders) {
             multRotationY(45); //DESNECESSARIO PROVAVELMENTE
             Plane();
         popMatrix();
+
+        //enviroment 
+        //ps pode ser melhorado como foi feto com as outras primitivas
+        pushMatrix();   
+            lake();
+        popMatrix();
+
+/*
+        pushMatrix();
+            lakeHolder();
+        popMatrix();
+        */
+
+        pushMatrix();
+            circularPavement();
+        popMatrix();
+
+        pushMatrix();
+            multRotationY(45);// isto porque para o plane foi feito o mesmo
+            pavement();
+        popMatrix();
+        //bench
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([5+1,0.7,50]);
+                pushMatrix();
+                benchLeg1();
+                popMatrix();
+            multTranslation([0,0,-3]);
+                pushMatrix();
+                benchLeg2();
+                popMatrix();
+            multTranslation([0,0.6/2,3/2]);
+                pushMatrix();
+                benchSeat();
+                popMatrix();
+            multRotationZ(-90);
+            multTranslation([-3/2+0.5/2,3/2,0])
+                pushMatrix();
+                benchBackrest();
+                popMatrix();
+        popMatrix();
+
+        //building
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,20/2,-52]);//6 =altura da base/2, 42 = WORLD_SCALE - LARGURA DA BASE do edificio/2
+            buildingBase();
+        popMatrix();
+
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,40/2,-50]);
+            buildingCenter();
+        popMatrix();
+
+
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,12.5/2,-125/2+25]);
+            buildingEntrance();
+        popMatrix();
+
+        pushMatrix();
+            multRotationY(-45);
+            multTranslation([0,12.5/6,-125/2+(25+12.5/2)-4.6]);
+            buildingDoors();
+        popMatrix();   
+        
+        
+        //trees
+        pushMatrix();
+            multTranslation([50,5/2,25]);
+                pushMatrix();
+                     treeTrunk1();
+                popMatrix();
+                     multTranslation([0,7/2,0]);
+                     pushMatrix();
+                     treeLeaves1();
+                popMatrix();
+        popMatrix();
+
+
+
+        pushMatrix();
+            multTranslation([-40,5/2,-30]);
+                pushMatrix();
+                     treeTrunk2();
+                popMatrix();
+                
+                     multTranslation([0,7/2,0]);
+                     pushMatrix();
+                     treeLeaves2();
+                popMatrix();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-60,9/2,0]);
+            pushMatrix();
+                 pineTrunk();
+            popMatrix();
+            
+                 multTranslation([0,20/2+9/2-0.1,0]);
+                 pushMatrix();
+                 pineLeaves();
+            popMatrix();
+    popMatrix();
+        
+
+
+
+
+        
         //Helicopter
         pushMatrix();         
             multRotationY(movement); // movimento em torno de y do helicoptero
