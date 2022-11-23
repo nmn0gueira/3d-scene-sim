@@ -378,10 +378,10 @@ function setup(shaders) {
     //enviroment
 // ps para as cores usei um site, https://antongerdelan.net/colour/
     function lake(){
-        multScale([10,0.5,10]);  // 10 = WORLD_SCALE/5
+        multScale([10,0.5,10]);  // 10 = WORLD_SCALE/5 , 0.5 para ter alguma grossura
     
         multTranslation([0,0.7,0]);// tem que se elevar um bocadinho para aparecer. 0,04= 2*elevaçao do pavement
-        let color = [0.0,0.51,0.91,1.0]; // Color of the sun
+        let color = [0.0,0.51,0.91,1.0]; 
         
         setColor(color);
 
@@ -407,7 +407,7 @@ function setup(shaders) {
 
     }*/
     function circularPavement(){
-        multScale([25,0.5,25]);  // 10 = WORLD_SCALE/5
+        multScale([25,0.5,25]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
     
         multTranslation([0,0.6,0]); //tem que se elevar um pouco para aparecer
         let color = [0.78,0.78,0.78,1.0]; 
@@ -421,7 +421,7 @@ function setup(shaders) {
     }
 
     function pavement(){
-        multScale([125,0.5,10]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([125,0.5,10]);  // 125 = plane size, 10=* WORLD_SCALE/5, o.5 para ter alguma grossura
 
         multTranslation([0,0.6,0]); //tem que se elevar um pouco para aparecer
         let color = [0.78,0.78,0.78,1.0]; 
@@ -436,7 +436,8 @@ function setup(shaders) {
 //bench
 //O BENCH PROVAVELMENTE TEM QUE SE REDUZIR DE TAMANHO
     function benchLeg1(){
-        multScale([2,0.7,0.5]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli, 
+        //exceto 0.7 que e para ter alguma parte que fique dentro do plane
 
         let color = [0.0,0.0,0.0,1.0]; 
         
@@ -449,8 +450,8 @@ function setup(shaders) {
 
     }
     function benchLeg2(){
-        multScale([2,0.7,0.5]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
-
+        multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli
+//exceto 0.7 que e para ter alguma parte que fique dentro do plane
   
         let color = [0.0,0.0,0.0,1.0]; 
         
@@ -462,7 +463,7 @@ function setup(shaders) {
     }
 
     function benchSeat(){
-        multScale([3,0.5,6]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([3,0.5,6]);  //tamanhos random, pequenos para serem menor que o heli,  
 
         //tem que se elevar um pouco para aparecer
         let color = [1.0,0.0,0.0,1.0]; 
@@ -474,7 +475,7 @@ function setup(shaders) {
         CUBE.draw(gl, program, mode);
     }
     function benchBackrest(){
-        multScale([3,0.5,6]);  // 100 = WORLD_SCALE*2 , 10=* WORLD_SCALE/5
+        multScale([3,0.5,6]); //mesmos tamanhos que o benchSeat
 
         let color = [1.0,0.0,0.0,1.0]; 
         
@@ -488,9 +489,9 @@ function setup(shaders) {
     //building
 
     function buildingBase(){
-        multScale([75,20,125/6]);  // 50 = WORLD_SCALE  , 13=WORLD_SCALE/4 ,100=Plane size
+        multScale([75,20,125/6]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
 
-        let color = [0.0,0.68,0.38,1.0]; 
+        let color = [0.98,0.68,0.38,1.0]; 
         
         setColor(color);
 
@@ -501,7 +502,7 @@ function setup(shaders) {
     }
     function buildingCenter(){
 
-        multScale([125/5,40,25]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+        multScale([125/5,40,25]);  // 125/5= para ter 1/5 do tamanho do PLANE, 40 valor escolhido para altura  , 25= WORLD_SCALE/2
 
         let color = [0.98,0.68,0.38,1.0]; 
         
@@ -514,7 +515,7 @@ function setup(shaders) {
     }
     function buildingEntrance(){
         
-        multScale([12.5,12.5,5]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+        multScale([12.5,12.5,5]);  // 12.5=WORLD_SCALE/4 ,5= Building center width/5
 
         let color = [0.93,0.87,0.81,1.0]; 
         
@@ -526,7 +527,7 @@ function setup(shaders) {
     }
 
     function buildingDoors(){
-        multScale([12.5/3,12.5/3,2]);  // 75=2*PLANE SIZE/3 100 = WORLD_SCALE*2  , 13= WORLD_SCALE/4 
+        multScale([12.5/3,12.5/3,1]);  // 12.5/3 para ter 1/3 do comprimento e altura da entrance , 1 para ter alguma grossura
 
         let color = [0.63,0.36,0.10,1.0]; 
         
@@ -537,8 +538,30 @@ function setup(shaders) {
         CUBE.draw(gl, program, mode);
 
     }
+    function buildingPilar1(){
+        multScale([3,40,3]);  // 40=building center height
 
+        let color = [0.93,0.87,0.81,1.0]; 
+        
+        setColor(color);
 
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
+    function buildingPilar2(){
+        multScale([3,40,3]); // 40=building center height
+
+        let color = [0.93,0.87,0.81,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CUBE.draw(gl, program, mode);
+
+    }
 
 
     //trees
