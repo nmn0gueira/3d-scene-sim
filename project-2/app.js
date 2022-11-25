@@ -16,9 +16,9 @@ let gl;
 const WORLD_SCALE = 50; 
 const EARTH_GRAVITY = 9.8;
 const MAX_HEIGHT = 30;
-const MAX_SPEED = 120;
+const MAX_ANGULAR_VELOCITY = 120;
 const MAX_INCLINATION = 30;
-const HELICOPTER_ACCELERATION = 120;        // in approximately 1 second of moving the helicopter is at max speed
+const ANGULAR_ACCELERATION = 120;        // in approximately 1 second of moving the helicopter is at max speed
 const HELICOPTER_INCLINATION = 30;          // in approximately 1 second of moving the helicopter is at max inclination
 const MAX_HELIX_ANGULAR_VELOCITY = 360*2;
 const HELIX_ANGULAR_ACCELERATION = 360*2;   // in approximately 1 second the helixes rotate with max angular velocity
@@ -39,12 +39,13 @@ let view = AXONOMETRIC; // the program starts with axonometric projection
 let keysPressed = [];
 
 //Helicopter related
-let speed = 0;          // Speed the helicopter is rotating around the Y axis
+let rotation = 0;                // Y axis rotation in relation to the center of the world
+let angularVelocity = 0;         // Rate of velocity at which the helicopter is rotating around the Y axis
 let helixRotation = 0;
-let helixAngularVelocity = 0;    //Only used for the helixes
+let helixAngularVelocity = 0;    // Only used for the helixes
 
 let height = 0;
-let movement = 0;       // Y axis rotation related to the center of the world
+
 let lastMovement= 0;
 let inclination = 0;    // X axis rotation on the helicopter
 let position;           // World coordinates of the helicopter
@@ -152,7 +153,7 @@ function setup(shaders) {
         pushMatrix();
             helixHolder();
         popMatrix();
-        multRotationY(helixRotation); //* velocityX
+        multRotationY(helixRotation);
         //Helix 1
         pushMatrix();
             multTranslation([10, 5 / 4, 0]); //10 = xBody/2, y = yHelixHolder/4
@@ -335,7 +336,7 @@ function setup(shaders) {
     }
 
     function box() {
-        multScale([4,2,1]); //20/5 10/5 5/5
+        multScale([3,3,3]); //20/5 10/5 5/5
 
         let color = [0.66,0.41,0.28,1.0]; // Green
         
@@ -1120,7 +1121,7 @@ function setup(shaders) {
 
         //Helicopter
         pushMatrix();         
-            multRotationY(movement); // movimento em torno de y do helicoptero
+            multRotationY(rotation); // movimento em torno de y do helicoptero
             multTranslation([30,0.0,0.0]); // translaçao do helicoptero (o raio é 30)
             //                                              0.5                          3                             0.5             
             multTranslation([0,4+height,0.0]); //4 = ((yPlano/2) + (0.4*translaçao em y de landing gear) + (0.4*yLandingGear/2))
@@ -1141,7 +1142,7 @@ function setup(shaders) {
         if (typeof lastTime == undefined) 
             lastTime = timeRender/1000;
         
-        lastMovement = movement;
+        lastMovement = rotation;
         time = timeRender/1000;
         let dt = time - lastTime;
 
@@ -1158,7 +1159,6 @@ function setup(shaders) {
                         mode = gl.TRIANGLES;
                         break;
                     case 'ArrowUp':
-                        //fazer com que so levante voo apos rodar as helices com uma certa velocidade
                         if (height < MAX_HEIGHT) {
                             height += 0.25;
                         }
@@ -1170,10 +1170,12 @@ function setup(shaders) {
                         break;
                     case 'ArrowLeft':
                         if (height > 0) {
-                            movement += speed*dt;      // move the helicopter with a certain speed
-                            if (speed < MAX_SPEED)
-                                speed += dt*HELICOPTER_ACCELERATION;
+                            rotation += angularVelocity*dt;
+                            if (angularVelocity < MAX_ANGULAR_VELOCITY)
+                                //If the next value is above the max value set at max value
+                                angularVelocity = angularVelocity + dt*ANGULAR_ACCELERATION > MAX_ANGULAR_VELOCITY ? MAX_ANGULAR_VELOCITY: angularVelocity + dt*ANGULAR_ACCELERATION;
                             if (inclination < MAX_INCLINATION)
+                                //If the next value is above the max value set at max value
                                 inclination = inclination + dt*HELICOPTER_INCLINATION > MAX_INCLINATION ? MAX_INCLINATION : inclination + dt*HELICOPTER_INCLINATION;
                         }
                         break;
@@ -1205,20 +1207,21 @@ function setup(shaders) {
                  * the landing will be adjusted as well
                 */
                 if (k == 'ArrowLeft' || height == 0) {
-                    if (speed > 0) {
-                        speed -= HELICOPTER_ACCELERATION*dt;
-                        movement += speed*dt;
+                    if (angularVelocity > 0) {
+                        //If the next value is below the min value set at min value
+                        angularVelocity = angularVelocity - ANGULAR_ACCELERATION*dt < 0 ? 0 : angularVelocity-dt*ANGULAR_ACCELERATION;
+                        rotation += angularVelocity*dt;
                     }
 
                     if (inclination > 0)
-
+                        //If the next value is below the min value set at min value
                         inclination = inclination - dt*HELICOPTER_INCLINATION < 0 ? 0 : inclination - dt*HELICOPTER_INCLINATION;
                 }
 
         }    
         
         
-        if (height == 0 && helixAngularVelocity>0)
+        if (height == 0 && helixAngularVelocity > 0)
             //If the next value is below the min value set at min value
             helixAngularVelocity = helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION < 0 ? 0 : helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION;
 
@@ -1261,9 +1264,9 @@ function setup(shaders) {
         World();
 
         lastTime = time;
-        let movementAngle = Math.abs(lastMovement-movement);
+        let movementAngle = Math.abs(lastMovement-rotation);
         normaVelocidade= Math.tan(movementAngle*Math.PI/180)*30;     
-        console.log(helixAngularVelocity);
+        console.log(angularVelocity);
      
     }
 }
