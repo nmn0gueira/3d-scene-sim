@@ -825,7 +825,7 @@ function setup(shaders) {
 
         //building
             pushMatrix();
-                multTranslation([0, 20 / 2, -65.5]); // 20/2=buildingBase height/2 para subir,52=150/2(half Plane)-125/6/2(half buildingbase width)
+                multTranslation([0, 20 / 2, -64.4]); // 20/2=buildingBase height/2 para subir,52=150/2(half Plane)-125/6/2(half buildingbase width)
                 pushMatrix();
                    buildingBase();
                 popMatrix();
@@ -1100,7 +1100,7 @@ function setup(shaders) {
             popMatrix();
 
             pushMatrix();
-                multTranslation([0, 20 / 2, -63.5]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
+                multTranslation([0, 20 / 2, -62.4]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
                 pushMatrix();
                     buildingCenter();
                 popMatrix(); 
@@ -1437,17 +1437,21 @@ function setup(shaders) {
 
 
 
+            
+            //12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
+            pushMatrix();
+            multTranslation([0, 20 / 2, -150/ 2 + 25-0.9]);
+                pushMatrix();
+                    buildingEntrance();
+                popMatrix();
 
             pushMatrix();
-                multTranslation([0, 20 / 2, -150/ 2 + 25-2]); //12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
-                buildingEntrance();
-            popMatrix();
-
-            pushMatrix();
-                multTranslation([0, 12.5 / 6, -150 / 2 + 25 + 5/2 -0.4 -2 ]);
+                multTranslation([0, -20/2 + 12.5/6, 2.5-0.4]);
                 //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
                 buildingDoors();
+            popMatrix();
             popMatrix();  
+
 
             pushMatrix();
                 multTranslation([25 / 2,20 / 2,-150 / 2 + 25 + 12.5 / 2 +0.5]);
