@@ -374,7 +374,7 @@ function setup(shaders) {
                 pushMatrix();
                     //b.point[1] is the height at which the box was dropped
                     multTranslation([b.point[0],b.point[1],b.point[2]]);          
-                   //1.5 = (yBox/2+yPlane/2)
+                    //1.5 = (yBox/2+yPlane/2)
                     if (b.point[1]-1.5 > 0) { // Box has not hit the ground
 
                         b.point[0] = b.point[0] + b.velocity[0];
@@ -387,8 +387,6 @@ function setup(shaders) {
                         
                         
                         b.velocity[1] = b.velocity[1] + EARTH_GRAVITY/1000;
-                        //console.log("Velocity y" + b.velocity.y);
-                        //console.log("Z: "+b.velocity[2]);
                     }
                     box();
                 popMatrix();
