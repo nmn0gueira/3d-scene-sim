@@ -21,6 +21,8 @@ const MAX_INCLINATION = 30;
 const HELICOPTER_ACCELERATION = 0.0625; // MAX_SPEED/(2^5)
 const HELICOPTER_INCLINATION = 0.9375; // Rule of three so helicopter reaches max inclination when max speed is reached
 const AIR_FRICTION = 0.03125;   // HELICOPTER_ACCELERATION/2
+const ANGULAR_VELOCITY = 2*Math.PI/3;   //It takes 3 seconds to do one lap around the y axis at max speed
+const LINEAR_VELOCITY = 30*ANGULAR_VELOCITY;
 
 // Views
 const AXONOMETRIC = "Axonometric";
@@ -30,9 +32,8 @@ const RIGHT = "Right";
 const HELICOPTER = "Helicopter";
 
 let time = 0;           // Global simulation time in seconds
-let lastTime;
+let lastTime = 0;       // Last animation time
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
-let animation = true;   // Animation is running
 let objectProps = {gamma:0, theta:0};
 let view = AXONOMETRIC; // the program starts with axonometric projection
 let keysPressed = [];
@@ -46,8 +47,7 @@ let position;           // World coordinates of the helicopter
 let front;              // 
 let boxes = [];         // Boxes the helicopter drops
 
-let velocity;           // Vectorial velocity of the helicopter
-
+//let velocityDirection;   // Vector with the direction the helicopter is moving
 
 function setup(shaders) {
     let canvas = document.getElementById("gl-canvas");
@@ -75,7 +75,7 @@ function setup(shaders) {
         
         // Space can be pressed for a single box or held for multiple boxes
         if (type && event.key == " " && height > 0)
-            boxes.push({ time: time, velocity: velocity, point: position});
+            boxes.push({ time: time, velocity: [(WORLD_SCALE/LINEAR_VELOCITY)*Math.cos(movement),0, (WORLD_SCALE/LINEAR_VELOCITY)*Math.sin(movement)], point: position});
     }
  
 
@@ -353,11 +353,12 @@ function setup(shaders) {
     // Used only right before drawing the helicopter
     function mModelPoint() {
         const mModel = mult(inverse(mView), modelView());
+        
         position = mult(mModel, vec4(0.0,0.0,0.0,1.0));
 
-        front = mult(mModel, vec4(0.0,0.0,1.0,1.0));    // MIGHT NEED CHANGING
+        front = mult(mModel, vec4(0.0,0.0,1.0,1.0));    
 
-        velocity = subtract(front,position);
+        //velocityDirection = subtract(front,position);
     }
 
 
@@ -370,12 +371,12 @@ function setup(shaders) {
                     
                     multTranslation([b.velocity[0],-b.velocity[1],b.velocity[2]]);
                                
-                    b.velocity[0] = b.velocity[0] - AIR_FRICTION <= 0 ? 0 : b.velocity[0] - AIR_FRICTION;
-                    console.log("Velocity x" + b.velocity[0]);
+                    //b.velocity[0] = b.velocity[0] - AIR_FRICTION <= 0 ? 0 : b.velocity[0] - AIR_FRICTION;
+                    //console.log("Velocity x" + b.velocity[0]);
                     //1.5 = (yBox/2+yPlane/2)
                     b.velocity[1] = b.velocity[1] + EARTH_GRAVITY/12 >= b.point[1]-1.5 ? b.point[1]-1.5 : b.velocity[1] + EARTH_GRAVITY/12;
                     //console.log("Velocity y" + b.velocity.y);
-                    b.velocity[2] = b.velocity[2] - AIR_FRICTION <= 0 ? 0 : b.velocity[2] - AIR_FRICTION;
+                    //b.velocity[2] = b.velocity[2] - AIR_FRICTION <= 0 ? 0 : b.velocity[2] - AIR_FRICTION;
                     box();
 
                 popMatrix();
@@ -1222,14 +1223,14 @@ function setup(shaders) {
 
 
     function render(timeRender) {
-        // VELOCIDADE ANGULAR É 3s
-
-        let dt = time - lastTime; 
         if (typeof lastTime == undefined) 
-            lastTime = time;
-
+            lastTime = timeRender/1000;
+        
         time = timeRender/1000;
-        window.requestAnimationFrame(render);
+        let dt = time - lastTime;
+        dt = 1;             // TEMPORARIO
+
+        window.requestAnimationFrame(render);  
 
         // To execute commands of pressed keys
         for (let k in keysPressed) {
@@ -1240,9 +1241,6 @@ function setup(shaders) {
                         break;
                     case 's':
                         mode = gl.TRIANGLES;
-                        break;
-                    case 'p':
-                        animation = !animation;
                         break;
                     case 'ArrowUp':
                         //fazer com que so levante voo apos rodar as helices com uma certa velocidade
@@ -1257,9 +1255,9 @@ function setup(shaders) {
                         break;
                     case 'ArrowLeft':
                         if (height > 0) {
-                            movement += speed * dt;      // move the helicopter with a certain speed
+                            movement += speed*dt;      // move the helicopter with a certain speed
                             if (speed < MAX_SPEED)
-                                speed += HELICOPTER_ACCELERATION;
+                                speed += dt*HELICOPTER_ACCELERATION;
                             if (inclination < MAX_INCLINATION)
                                 inclination += HELICOPTER_INCLINATION;
                         }
@@ -1294,7 +1292,7 @@ function setup(shaders) {
                 if (k == 'ArrowLeft' || height == 0) {
                     if (speed * dt > 0) {
                         speed -= HELICOPTER_ACCELERATION;
-                        movement += speed *dt;
+                        movement += speed*dt;
                     }
 
                     if (inclination > 0)
@@ -1323,16 +1321,17 @@ function setup(shaders) {
                 mView = lookAt([1, 0, 0], [0, 0, 0], [0, 1, 0]);
                 break;
             case HELICOPTER:
-                //at: newPosFront = mult(model, vec4(0,0,2,1));
-                //console.log(eye);
+                //at: newPosFront = mult(model, vec4(0,0,2,1));       
                 mView = lookAt([position[0],position[1],position[2]],[front[0],front[1], front[2]], [0, 1, 0]);
                 break;
         }
 
         loadMatrix(mView);
+
         World();
 
         lastTime = time;
+        console.log (timeRender);
     }
 }
 
