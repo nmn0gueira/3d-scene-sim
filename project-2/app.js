@@ -58,7 +58,7 @@ let front;              // World coordinates of a position directly in front of 
 let boxes = [];         // Boxes the helicopter drops
 
 let velocityDirection;   // Vector with the direction the helicopter is moving
-let normaVelocidade;       //O RAIO É 30
+let linearVelocity;
 
 
 function setup(shaders) {
@@ -78,6 +78,7 @@ function setup(shaders) {
     gui.add(objectProps, "gamma", 0, 360, 1).name("X");
     gui.add(objectProps, "theta", 0, 360, 1).name("Y");
     gui.add(helicopterOnly, "mode").name("Helicopter Only");
+    //gui.add(angularVelocity);
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
@@ -89,7 +90,7 @@ function setup(shaders) {
         // Space can be pressed for a single box or held for multiple boxes
         if (type && event.key == " " && height > 0) {
             //var toPush = boxes.length % 2 == 0 ? position : front;
-            boxes.push({ time: time, velocity: [velocityDirection[0]*normaVelocidade,0, velocityDirection[2]*normaVelocidade], point: position});
+            boxes.push({ time: time, velocity: [velocityDirection[0]*linearVelocity,0, velocityDirection[2]*linearVelocity], point: position});
         }
     }
  
@@ -1673,14 +1674,14 @@ function setup(shaders) {
             multScale([2,2,2]);
             buildHelicopter();
         }
-            
-
+        
         else
             World();
 
         lastTime = time;
         let movementAngle = Math.abs(lastMovement-rotation);
-        normaVelocidade= Math.tan(movementAngle*Math.PI/180)*RADIUS;     
+        // Angular velocity * RADIUS
+        linearVelocity= Math.tan(movementAngle*Math.PI/180)*RADIUS;     
      
     }
 }
