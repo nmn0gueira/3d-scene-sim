@@ -77,9 +77,8 @@ function setup(shaders) {
         
         // Space can be pressed for a single box or held for multiple boxes
         if (type && event.key == " " && height > 0) {
-            var toPush = position;
             //var toPush = boxes.length % 2 == 0 ? position : front;
-            boxes.push({ time: time, velocity: [velocityDirection[0]*normaVelocidade,0, velocityDirection[2]*normaVelocidade], point: toPush});
+            boxes.push({ time: time, velocity: [velocityDirection[0]*normaVelocidade,0, velocityDirection[2]*normaVelocidade], point: position});
         }
     }
  
@@ -361,7 +360,7 @@ function setup(shaders) {
         
         position = mult(mModel, vec4(0.0,0.0,0.0,1.0));
 
-        //front = mult(mModel, vec4(-5.0,0.0,0.0,1.0));  //Maybe usar isto para a camera  
+        //front = mult(mModel, vec4(-5.0,0.0,0.0,1.0));  //Talvez usar isto para a camera  
         front = mult(mModel, vec4(-1.0,0.0,0.0,1.0));
 
         velocityDirection = normalize(subtract(front,position));
@@ -375,6 +374,7 @@ function setup(shaders) {
                     //b.point[1] is the height at which the box was dropped
                     multTranslation([b.point[0],b.point[1],b.point[2]]);          
                     //1.5 = (yBox/2+yPlane/2)
+                    // VERIFICAR SE FAZ MAIS SENTIDO COM DELTA TIME
                     if (b.point[1]-1.5 > 0) { // Box has not hit the ground
 
                         b.point[0] = b.point[0] + b.velocity[0];
