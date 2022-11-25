@@ -14,6 +14,7 @@ import { GUI } from "../libs/dat.gui.module.js";
 let gl;
 
 const WORLD_SCALE = 50; 
+const RADIUS = 30;
 const EARTH_GRAVITY = 9.8;
 const MAX_HEIGHT = 30;
 const MAX_ANGULAR_VELOCITY = 120;
@@ -53,9 +54,8 @@ let front;              // World coordinates of a position directly in front of 
 let boxes = [];         // Boxes the helicopter drops
 
 let velocityDirection;   // Vector with the direction the helicopter is moving
-let normaVelocidade;       //30 É O RAIO
+let normaVelocidade;       //O RAIO É 30
 
-let eye;
 
 function setup(shaders) {
     let canvas = document.getElementById("gl-canvas");
@@ -1121,8 +1121,8 @@ function setup(shaders) {
 
         //Helicopter
         pushMatrix();         
-            multRotationY(rotation); // movimento em torno de y do helicoptero
-            multTranslation([30,0.0,0.0]); // translaçao do helicoptero (o raio é 30)
+            multRotationY(rotation); // rotation around the Y axis
+            multTranslation([RADIUS,0.0,0.0]); // helicopter translation to rotate Y axis with 30 radius
             //                                              0.5                          3                             0.5             
             multTranslation([0,4+height,0.0]); //4 = ((yPlano/2) + (0.4*translaçao em y de landing gear) + (0.4*yLandingGear/2))
             multRotationY(-90);
@@ -1254,8 +1254,7 @@ function setup(shaders) {
                 break;
             case HELICOPTER:
                 //at: newPosFront = mult(model, vec4(0,0,2,1));   
-                eye = position;
-                mView = lookAt([eye[0],eye[1],eye[2]],[front[0],front[1], front[2]], [0, 1, 0]);
+                mView = lookAt([position[0],position[1],position[2]],[front[0],front[1], front[2]], [0, 1, 0]);
                 break;
         }
 
@@ -1265,7 +1264,7 @@ function setup(shaders) {
 
         lastTime = time;
         let movementAngle = Math.abs(lastMovement-rotation);
-        normaVelocidade= Math.tan(movementAngle*Math.PI/180)*30;     
+        normaVelocidade= Math.tan(movementAngle*Math.PI/180)*RADIUS;     
         console.log(angularVelocity);
      
     }
