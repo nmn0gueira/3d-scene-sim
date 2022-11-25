@@ -465,7 +465,7 @@ function setup(shaders) {
     }
 //bench
 //O BENCH PROVAVELMENTE TEM QUE SE REDUZIR DE TAMANHO
-    function benchLeg1(){
+    function benchLeg(){
         multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli, 
         //exceto 0.7 que e para ter alguma parte que fique dentro do plane
 
@@ -479,18 +479,7 @@ function setup(shaders) {
 
 
     }
-    function benchLeg2(){
-        multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli
-//exceto 0.7 que e para ter alguma parte que fique dentro do plane
-  
-        let color = [0.0,0.0,0.0,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
+    
 
     function benchSeat(){
         multScale([3,0.5,6]);  //tamanhos random, pequenos para serem menor que o heli,  
@@ -531,175 +520,7 @@ function setup(shaders) {
 
     }
 
-    function windowLeftUp1(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-
-    function windowLeftUp2(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowLeftUp3(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowLeftUp4(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowLeftDown1(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowLeftDown2(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowLeftDown3(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowLeftDown4(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-
-    function windowRightUp1(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-
-    function windowRightUp2(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowRightUp3(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowRightUp4(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowRightDown1(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowRightDown2(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowRightDown3(){
-        multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.98,0.08,0.08,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function windowRightDown4(){
+    function window1(){
         multScale([20/6,20/6,0.5]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
 
         let color = [0.98,0.08,0.08,1.0]; 
@@ -724,19 +545,7 @@ function setup(shaders) {
 
     }
 
-    function corner1(){
-
-        multScale([2,20,2]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
-
-        let color = [0.78,0.78,0.78,1.0]; 
-        
-        setColor(color);
-
-        uploadModelView();
-
-        CUBE.draw(gl, program, mode);
-    }
-    function corner2(){
+    function corner(){
 
         multScale([2,20,2]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
 
@@ -802,7 +611,7 @@ function setup(shaders) {
         CUBE.draw(gl, program, mode);
 
     }
-    function buildingPilar1(){
+    function buildingPilar(){
         multScale([3,20,3]);  // 40=building center height
 
         let color = [0.93,0.87,0.81,1.0]; 
@@ -988,12 +797,14 @@ function setup(shaders) {
                 multTranslation([5+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
                 //0.7 para ficar com parte da altura "enterrada no Plane", 50 valor random para ficar quase no limite do plane
                 pushMatrix();
-                    benchLeg1();
+                    benchLeg();
                 popMatrix();
+
                 pushMatrix();
                     multTranslation([0,0,-3]);  // para ficar a 3 de distancia
-                    benchLeg2();
+                    benchLeg();
                 popMatrix();
+
                 pushMatrix();
                     multTranslation([0,0.5/2,3/2-3]); //0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
                     benchSeat();
@@ -1022,96 +833,188 @@ function setup(shaders) {
 
                 pushMatrix();
                    multTranslation([75/2,0,125/12]);
-                   corner1();
+                   corner();
                 popMatrix();
 
                 pushMatrix();
                    multTranslation([-75/2,0,125/12]);
-                   corner2();
+                   corner();
                 popMatrix();
                 
-                //windows LEFT  side
+                //windows base FRONT LEFT  side UP
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 2 ,20/3,125/12 -0.2]);
-                   windowLeftUp1();
+                   window1();
                 popMatrix();
 
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 7,20/3,125/12 -0.2]);
-                   windowLeftUp2();
+                   window1();
                 popMatrix();
 
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 12,20/3,125/12 -0.2]);
-                   windowLeftUp3();
+                   window1();
                 popMatrix();
                 
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 17,20/3,125/12 -0.2]);
-                   windowLeftUp4();
+                   window1();
                 popMatrix();
 
-
+               //windows base FRONT LEFT side DOWN
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 2 ,-2,125/12 -0.2]);
-                   windowLeftDown1();
+                   window1();
                 popMatrix();
 
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 7,-2,125/12 -0.2]);
-                   windowLeftDown2();
+                   window1();
                 popMatrix();
 
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 12,-2,125/12 -0.2]);
-                   windowLeftDown3();
+                   window1();
                 popMatrix();
                 
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 17,-2,125/12 -0.2]);
-                   windowLeftDown4();
+                   window1();
                 popMatrix();
 
-               //windows RIGHT side
+               //windows base FRONT RIGHT side UP
                 pushMatrix();
                    multTranslation([25/2 + 20/12 + 2 ,20/3,125/12 -0.2]);
-                   windowRightUp1();
+                   window1();
                 popMatrix();
 
                 pushMatrix();
                    multTranslation([25/2 + 20/12 + 7,20/3,125/12 -0.2]);
-                   windowRightUp2();
+                   window1();
                 popMatrix();
 
                 pushMatrix();
                    multTranslation([25/2 + 20/12 + 12,20/3,125/12 -0.2]);
-                   windowRightUp3();
+                   window1();
                 popMatrix();
              
                 pushMatrix();
                   multTranslation([25/2 + 20/12 + 17,20/3,125/12 -0.2]);
-                  windowRightUp4();
+                  window1();
                 popMatrix();
 
+                //windows FRONT RIGHT side DOWN
                 pushMatrix();
                   multTranslation([25/2 + 20/12 + 2 ,-2,125/12 -0.2]);
-                  windowRightDown1();
+                  window1();
                 popMatrix();
 
                 pushMatrix();
                   multTranslation([25/2 + 20/12 + 7,-2,125/12 -0.2]);
-                  windowRightDown2();
+                  window1();
                 popMatrix();
 
                 pushMatrix();
                   multTranslation([25/2 + 20/12 + 12,-2,125/12 -0.2]);
-                  windowRightDown3();
+                  window1();
                 popMatrix();
              
                 pushMatrix();
                   multTranslation([25/2 + 20/12 + 17,-2,125/12 -0.2]);
-                  windowRightDown4();
+                  window1();
                 popMatrix();
+
+                
+
+
+
+               //windows base BEHIND LEFT side UP
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 2 ,20/3,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 7,20/3,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 12,20/3,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+                
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 17,20/3,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+               //windows base BEHIND LEFT side DOWN
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 2 ,-2,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 7,-2,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 12,-2,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+                
+                pushMatrix();
+                   multTranslation([-25/2 - 20/12 - 17,-2,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+               //windows base BEHIND RIGHT side UP
+                pushMatrix();
+                   multTranslation([25/2 + 20/12 + 2 ,20/3,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+                pushMatrix();
+                   multTranslation([25/2 + 20/12 + 7,20/3,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+
+                pushMatrix();
+                   multTranslation([25/2 + 20/12 + 12,20/3,-125/12 +0.2]);
+                   window1();
+                popMatrix();
+             
+                pushMatrix();
+                  multTranslation([25/2 + 20/12 + 17,20/3,-125/12 +0.2]);
+                  window1();
+                popMatrix();
+
+                //windows base BEHIND RIGHT side DOWN
+                pushMatrix();
+                  multTranslation([25/2 + 20/12 + 2 ,-2,-125/12 +0.2]);
+                  window1();
+                popMatrix();
+
+                pushMatrix();
+                  multTranslation([25/2 + 20/12 + 7,-2,-125/12 +0.2]);
+                  window1();
+                popMatrix();
+
+                pushMatrix();
+                  multTranslation([25/2 + 20/12 + 12,-2,-125/12 +0.2]);
+                  window1();
+                popMatrix();
+             
+                pushMatrix();
+                  multTranslation([25/2 + 20/12 + 17,-2,-125/12 +0.2]);
+                  window1();
+                popMatrix();
+
+
+
 
                 
             popMatrix();
@@ -1146,23 +1049,23 @@ function setup(shaders) {
             pushMatrix();
                 multTranslation([25 / 2,20 / 2,-125 / 2 + 25 + 12.5 / 2 + 1.5]);
                 pushMatrix();
-                    buildingPilar1();
+                    buildingPilar();
                 popMatrix();
 
                 pushMatrix();
                     multTranslation([-7.5,0,0]);
-                    buildingPilar2();
+                    buildingPilar();
                 popMatrix();
 
                  pushMatrix();
                     multTranslation([-10-7.5,0,0]);
-                    buildingPilar3();
+                    buildingPilar();
                 popMatrix();
 
                 
                 pushMatrix();
                     multTranslation([-7.5-10-7.5,0,0]);
-                    buildingPilar4();
+                    buildingPilar();
                 popMatrix();
                 multTranslation([-12.5,20/2-3/2+0.1,-2.9]);
                     pushMatrix(); 
