@@ -822,7 +822,7 @@ function setup(shaders) {
 
         //building
             pushMatrix();
-                multTranslation([0, 20 / 2, -52]); // 20/2=buildingBase height/2 para subir,52=125/2(half Plane)-125/6/2(half buildingbase width)
+                multTranslation([0, 20 / 2, -65.5]); // 20/2=buildingBase height/2 para subir,52=150/2(half Plane)-125/6/2(half buildingbase width)
                 pushMatrix();
                    buildingBase();
                 popMatrix();
@@ -928,10 +928,6 @@ function setup(shaders) {
                   window1();
                 popMatrix();
 
-                
-
-
-
                //windows base BEHIND LEFT side UP
                 pushMatrix();
                    multTranslation([-25/2 - 20/12 - 2 ,20/3,-125/12 +0.2]);
@@ -1023,7 +1019,7 @@ function setup(shaders) {
             popMatrix();
 
             pushMatrix();
-                multTranslation([0, 20 / 2, -50]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
+                multTranslation([0, 20 / 2, -63.5]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
                 pushMatrix();
                     buildingCenter();
                 popMatrix(); 
@@ -1039,18 +1035,18 @@ function setup(shaders) {
 
 
             pushMatrix();
-                multTranslation([0, 20 / 2, -125 / 2 + 25]); //12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
+                multTranslation([0, 20 / 2, -150/ 2 + 25-2]); //12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
                 buildingEntrance();
             popMatrix();
 
             pushMatrix();
-                multTranslation([0, 12.5 / 6, -125 / 2 + 25 + 5/2 -0.4 ]);
+                multTranslation([0, 12.5 / 6, -150 / 2 + 25 + 5/2 -0.4 -2 ]);
                 //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
                 buildingDoors();
             popMatrix();  
 
             pushMatrix();
-                multTranslation([25 / 2,20 / 2,-125 / 2 + 25 + 12.5 / 2 + 1.5]);
+                multTranslation([25 / 2,20 / 2,-150 / 2 + 25 + 12.5 / 2 +0.5]);
                 pushMatrix();
                     buildingPilar();
                 popMatrix();
