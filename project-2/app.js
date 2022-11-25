@@ -32,6 +32,10 @@ const TOP = "Top";
 const RIGHT = "Right";
 const HELICOPTER = "Helicopter";
 
+//Additional
+let helicopterOnly = {mode:false}; 
+
+
 let time = 0;           // Global simulation time in seconds
 let lastTime = 0;       // Last animation time
 let mode;               // Drawing mode (gl.LINES or gl.TRIANGLES)
@@ -73,6 +77,7 @@ function setup(shaders) {
     //Controls for the axonometric projection
     gui.add(objectProps, "gamma", 0, 360, 1).name("X");
     gui.add(objectProps, "theta", 0, 360, 1).name("Y");
+    gui.add(helicopterOnly, "mode").name("Helicopter Only");
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
@@ -1260,12 +1265,18 @@ function setup(shaders) {
 
         loadMatrix(mView);
 
-        World();
+        if (helicopterOnly.mode) {
+            multScale([2,2,2]);
+            buildHelicopter();
+        }
+            
+
+        else
+            World();
 
         lastTime = time;
         let movementAngle = Math.abs(lastMovement-rotation);
         normaVelocidade= Math.tan(movementAngle*Math.PI/180)*RADIUS;     
-        console.log(angularVelocity);
      
     }
 }
