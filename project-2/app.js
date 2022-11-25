@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, vec4, inverse, mult, rotateX, rotateY, subtract, normalize } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, vec4, inverse, mult, rotateX, rotateY, subtract, normalize, scalem } from "../../libs/MV.js";
 import { modelView, loadMatrix, multRotationX, multRotationZ, multRotationY, multScale, multTranslation, pushMatrix, popMatrix } from "../../libs/stack.js";
 
 import * as SPHERE from '../../libs/objects/sphere.js';
@@ -50,6 +50,8 @@ let boxes = [];         // Boxes the helicopter drops
 
 let velocityDirection;   // Vector with the direction the helicopter is moving
 let normaVelocidade;       //30 É O RAIO
+
+let eye;
 
 function setup(shaders) {
     let canvas = document.getElementById("gl-canvas");
@@ -314,7 +316,7 @@ function setup(shaders) {
     }
 
     function Plane() {
-        multScale([125,1,125]); // 125 = 5/2* WORLD_SCALE
+        multScale([150,1,150]); // 125 = 5/2* WORLD_SCALE
 
         let color =[146/255,193/255, 46/255,1.0];   // 146,193,46 Green 1
         //let color = [68/255,109/255,68/255,1.0];   // 68,109,68 Green 2 
@@ -359,6 +361,8 @@ function setup(shaders) {
         const mModel = mult(inverse(mView), modelView());
         
         position = mult(mModel, vec4(0.0,0.0,0.0,1.0));
+
+        eye = normalize(position);
 
         //front = mult(mModel, vec4(-5.0,0.0,0.0,1.0));  //Talvez usar isto para a camera  
         front = mult(mModel, vec4(-1.0,0.0,0.0,1.0));
@@ -769,7 +773,6 @@ function setup(shaders) {
         
         //SURFACE  
         pushMatrix();
-            multRotationY(-45);
             pushMatrix();
                 Plane();        //PLANE
             popMatrix();
@@ -1238,8 +1241,9 @@ function setup(shaders) {
                 mView = lookAt([1, 0, 0], [0, 0, 0], [0, 1, 0]);
                 break;
             case HELICOPTER:
-                //at: newPosFront = mult(model, vec4(0,0,2,1));       
-                mView = lookAt([position[0],position[1],position[2]],[front[0],front[1], front[2]], [0, 1, 0]);
+                //at: newPosFront = mult(model, vec4(0,0,2,1));   
+                eye = position;
+                mView = lookAt([position[0]*0.4,position[1]*0.4,position[2]*0.4],[front[0],front[1], front[2]], [0, 1, 0]);
                 break;
         }
 
