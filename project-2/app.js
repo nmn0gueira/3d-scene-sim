@@ -18,6 +18,7 @@ const EARTH_GRAVITY = 9.8;
 const MAX_HEIGHT = 30;
 const MAX_SPEED = 120;  //estava 2 com dt=1
 const MAX_INCLINATION = 30;
+const MAX_ROTATIONS_PER_SECOND = 2;
 const HELICOPTER_ACCELERATION = 120; // MAX_SPEED/(2^5)  estava 0.0625 com dt=1 assim (em 1 segundo atinge a velocidade maxima)
 const HELICOPTER_INCLINATION = 0.9375; // Rule of three so helicopter reaches max inclination when max speed is reached
 //const ANGULAR_VELOCITY = 2*Math.PI/3;   //It takes 3 seconds to do one lap around the y axis at max speed
@@ -40,6 +41,7 @@ let keysPressed = [];
 
 //Helicopter related
 let speed = 0;          // Speed the helicopter is rotating around the Y axis
+let helixSpeed = 2;
 let height = 0;
 let movement = 0;       // Y axis rotation related to the center of the world
 let lastMovement= 0;
@@ -149,7 +151,7 @@ function setup(shaders) {
         pushMatrix();
             helixHolder();
         popMatrix();
-        multRotationY(time * 360 * 2 ); //* velocityX
+        multRotationY(time%360 * 360 * helixSpeed ); //* velocityX
         //Helix 1
         pushMatrix();
             multTranslation([10, 5 / 4, 0]); //10 = xBody/2, y = yHelixHolder/4
@@ -233,7 +235,7 @@ function setup(shaders) {
         pushMatrix();
             helixHolder();
         popMatrix();
-        multRotationY(time * 360 * 2 ); // * velocity
+        multRotationY(time%360 * 360 * helixSpeed); // * velocity
         pushMatrix();
             multTranslation([4, 2.5, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2
             tailHelix();
@@ -362,9 +364,7 @@ function setup(shaders) {
         
         position = mult(mModel, vec4(0.0,0.0,0.0,1.0));
 
-        eye = normalize(position);
-
-        //front = mult(mModel, vec4(-5.0,0.0,0.0,1.0));  //Talvez usar isto para a camera  
+        //front = mult(mModel, vec4(-10.0,0.0,0.0,1.0));  //Talvez usar isto para a camera  
         front = mult(mModel, vec4(-1.0,0.0,0.0,1.0));
 
         velocityDirection = normalize(subtract(front,position));
@@ -1315,7 +1315,11 @@ function setup(shaders) {
                         inclination -= HELICOPTER_INCLINATION;
                 }
 
-        }             
+        }    
+        
+        
+        //let helixAcceleration = height > 0 ? dt*0.5 : -(dt*0.5);
+        //helixSpeed = helixSpeed + helixAcceleration > 0 && helixSpeed + helixAcceleration < MAX_ROTATIONS_PER_SECOND ? helixSpeed+ helixAcceleration : helixSpeed;
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -1340,7 +1344,7 @@ function setup(shaders) {
             case HELICOPTER:
                 //at: newPosFront = mult(model, vec4(0,0,2,1));   
                 eye = position;
-                mView = lookAt([position[0]*0.4,position[1]*0.4,position[2]*0.4],[front[0],front[1], front[2]], [0, 1, 0]);
+                mView = lookAt([eye[0],eye[1],eye[2]],[front[0],front[1], front[2]], [0, 1, 0]);
                 break;
         }
 
