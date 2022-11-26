@@ -648,7 +648,7 @@ function setup(shaders) {
 
     function corner(){
 
-        multScale([2,20,2]);  e
+        multScale([2,20,2]); 
 
         let color = [0.78,0.78,0.78,1.0]; 
         
