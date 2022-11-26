@@ -501,7 +501,7 @@ function setup(shaders) {
     }
 
     function tableBench(){
-        multScale([3,0.5,11]); ////random values
+        multScale([3,0.5,11]); //random values
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -513,7 +513,7 @@ function setup(shaders) {
     }
 
     function tableBenchLeg(){
-        multScale([0.5,1,6]);
+        multScale([0.5,1,6]);//random values
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -527,7 +527,6 @@ function setup(shaders) {
 
 
 //bench
-//O BENCH PROVAVELMENTE TEM QUE SE REDUZIR DE TAMANHO
     function benchLeg(){
         multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli, 
         //exceto 0.7 que e para ter alguma parte que fique dentro do plane
@@ -797,6 +796,35 @@ function setup(shaders) {
 
      }
 
+     function treeTrunk3(){
+        multScale([3,11,3]);  // random
+
+        let color = [0.52,0.24,0.01,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CYLINDER.draw(gl, program, mode);
+
+     }
+
+     function treeLeaves3(){
+        multScale([10,7,10]);  // random
+
+        let color = [0.51,0.81,0.42,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        SPHERE.draw(gl, program, mode);
+
+
+     }
+
+
+
      function pineTrunk(){
         multScale([3,9,3]);  // random
 
@@ -915,7 +943,7 @@ function setup(shaders) {
 
            
             pushMatrix();
-            multTranslation([50,2.5,60]);
+            multTranslation([60,2.5,40]);
             
             pushMatrix();
                 table(); //Table1
@@ -955,8 +983,8 @@ function setup(shaders) {
             popMatrix();
 
             
-            pushMatrix();
-            multTranslation([-50,2.5,-40]);
+        pushMatrix();
+            multTranslation([50,2.5,65]);
             
             pushMatrix();
                 table(); //Table2
@@ -992,12 +1020,12 @@ function setup(shaders) {
             multTranslation([-4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
-            popMatrix();
+        popMatrix();
 
-           
-           
-            pushMatrix();
-            multTranslation([60,2.5,-40]);
+
+
+        pushMatrix();
+            multTranslation([35,2.5,30]);
             
             pushMatrix();
                 table(); //Table3
@@ -1033,9 +1061,10 @@ function setup(shaders) {
             multTranslation([-4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
+        popMatrix();
 
-            popMatrix();
-        
+           
+           
 
         //building
             pushMatrix();
@@ -1811,6 +1840,34 @@ function setup(shaders) {
                     treeLeaves2();
                 popMatrix();
             popMatrix();
+
+
+
+        pushMatrix();
+            multTranslation([35,11/2,45]);
+             pushMatrix();
+             treeTrunk3();
+             popMatrix();
+
+             multTranslation([0,11/2,0]); //9/2=halfLeaves height
+             pushMatrix();
+                 treeLeaves3();
+             popMatrix();
+         popMatrix();
+
+
+         pushMatrix();
+            multTranslation([-50,11/2,-55]);
+             pushMatrix();
+             treeTrunk3();
+             popMatrix();
+
+             multTranslation([0,11/2,0]); //9/2=halfLeaves height
+             pushMatrix();
+                 treeLeaves3();
+             popMatrix();
+         popMatrix();
+
 
         
 
