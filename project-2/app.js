@@ -362,17 +362,6 @@ function setup(shaders) {
         
     }
 
-    function Sun() {
-        multScale([10,10,10]);  // 10 = WORLD_SCALE/5
-  
-        let color = [253/255,184/255,19/255,1.0]; // Color of the sun
-        
-        setColor(color);
-
-        uploadModelView();
-
-        SPHERE.draw(gl, program, mode);
-    }
 
     // Used only right before drawing the helicopter
     function mModelPoint() {
@@ -823,8 +812,6 @@ function setup(shaders) {
 
      }
 
-
-
      function pineTrunk(){
         multScale([3,9,3]);  // random
 
@@ -879,12 +866,12 @@ function setup(shaders) {
             popMatrix();
             
             pushMatrix();
-                multTranslation([0,0.25,0]);     // 0.5 = yPlane/2
+                multTranslation([0,0.25,0]);     // 0.25 = yPlane/4
                 circularPavement(); //CIRCULAR PAVEMENT
             popMatrix();
 
             pushMatrix();
-                multTranslation([0,0.25,0]);     // 0.5 = yPlane/2
+                multTranslation([0,0.25,0]);     // 0.25 = yPlane/4
                 pavement();         // PAVEMENT
             popMatrix();
             
@@ -894,7 +881,7 @@ function setup(shaders) {
 
         
 
-            //bench (REVER ISTO MAIS TARDE)
+            //benchs
             pushMatrix();
                 multTranslation([25/2+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
                 //0.7 para ficar com parte da altura "enterrada no Plane", 50 valor random para ficar quase no limite do plane
@@ -950,40 +937,40 @@ function setup(shaders) {
             popMatrix();
             
             pushMatrix();
-            multTranslation([0,-1.3,0]);
+                multTranslation([0,-1.3,0]);
                 tableLeg();
             popMatrix();
 
             pushMatrix();
-               multTranslation([0,-1.3,0]);
-               multRotationY(90);
-               tableLeg();
+                multTranslation([0,-1.3,0]);
+                multRotationY(90);
+                tableLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([4,-1,0]);
+                multTranslation([4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([4,-1.5,0]);
+                multTranslation([4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-4,-1,0]);
+                multTranslation([-4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-4,-1.5,0]);
+                multTranslation([-4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
             popMatrix();
 
             
-        pushMatrix();
+            pushMatrix();
             multTranslation([50,2.5,65]);
             
             pushMatrix();
@@ -991,7 +978,7 @@ function setup(shaders) {
             popMatrix();
             
             pushMatrix();
-            multTranslation([0,-1.3,0]);
+                multTranslation([0,-1.3,0]);
                 tableLeg();
             popMatrix();
 
@@ -1002,22 +989,22 @@ function setup(shaders) {
             popMatrix();
 
             pushMatrix();
-            multTranslation([4,-1,0]);
+                multTranslation([4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([4,-1.5,0]);
+                multTranslation([4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-4,-1,0]);
+                multTranslation([-4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-4,-1.5,0]);
+                multTranslation([-4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
         popMatrix();
