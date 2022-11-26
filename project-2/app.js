@@ -214,28 +214,28 @@ function setup(shaders) {
     function HelicopterLowerBody() {
         //Support 1
         pushMatrix();    
-            multTranslation([-(4*X_SUPPORT_LEG), -Y_SUPPORT_LEG, Z_SUPPORT_LEG*8/3]);   //-6 = -(4xSupportLeg), -5 = -(ySupportLeg), 4 = (8zSupportLeg/3)
+            multTranslation([-X_BODY*3/10, -Y_BODY/2, Z_BODY*2/5]);   //-6 = -(3xBody/10), -5 = -(yBody/2), 4 = (2zBody/5)
             multRotationX(150); 
             multRotationZ(15); 
             buildSupportLeg();
         popMatrix();
         //Support 2
         pushMatrix();
-            multTranslation([4*X_SUPPORT_LEG,-Y_SUPPORT_LEG, Z_SUPPORT_LEG*8/3]);      //6 = (4xSupportLeg), -5 = -(ySupportLeg), 4 = (8zSupportLeg/3)
+            multTranslation([X_BODY*3/10,-Y_BODY/2, Z_BODY*2/5]);      //6 = (4xSupportLeg), -5 = -(ySupportLeg), 4 = (8zSupportLeg/3)
             multRotationX(150);
             multRotationZ(-15); 
             buildSupportLeg();
         popMatrix();
         //Support 3
         pushMatrix();
-            multTranslation([4*X_SUPPORT_LEG,-Y_SUPPORT_LEG,-(Z_SUPPORT_LEG*8/3)]);     //6 = (4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
+            multTranslation([X_BODY*3/10,-Y_BODY/2,-Z_BODY*2/5]);     //6 = (4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
             multRotationX(-150);
             multRotationZ(-15); 
             buildSupportLeg();
         popMatrix();
         //Support 4
         pushMatrix();
-            multTranslation([-(4*X_SUPPORT_LEG),-Y_SUPPORT_LEG,-(Z_SUPPORT_LEG*8/3)]);    //-6 = -(4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
+            multTranslation([-X_BODY*3/10,-Y_BODY/2,-Z_BODY*2/5]);    //-6 = -(4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
             multRotationX(-150);
             multRotationZ(15); 
             buildSupportLeg();
@@ -243,12 +243,12 @@ function setup(shaders) {
 
         //Landing gear 1
         pushMatrix();
-            multTranslation([0,-(X_LANDING_GEAR*3),Z_LANDING_GEAR*2]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), 5 = 2zLandingGear
+            multTranslation([0,-Y_BODY*3/4,Z_BODY/2]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), 5 = 2zLandingGear
             multRotationZ(90);
             buildLandingGear();
         popMatrix();
         //Landing gear 2
-        multTranslation([0,-7.5,-(Z_LANDING_GEAR*2)]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), -5 = - 2zLandingGear
+        multTranslation([0,-Y_BODY*3/4,-Z_BODY/2]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), -5 = - 2zLandingGear
         multRotationZ(90);
         buildLandingGear();
     }
