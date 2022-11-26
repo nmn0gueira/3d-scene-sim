@@ -159,7 +159,7 @@ function setup(shaders) {
         gl.uniform4fv(uColor, color);
     }
 
-    function buildMainBody() {
+    function buildHelicopterMainBody() {
 
         multScale([X_BODY, Y_BODY, Z_BODY]);
 
@@ -172,88 +172,88 @@ function setup(shaders) {
 
     }
 
-    function buildTail() {
+    function HelicopterTail() {
         pushMatrix();
-            helicopterTail1();
+            buildHelicopterTail1();
         popMatrix();
         multTranslation([X_BODY*5/8, Y_BODY/2, 0]); // 12.5 = xTail1/2, 5 = yTail1
         multRotationZ(70);  // tail2 rotation 
         pushMatrix();
-            helicopterTail2();
+            buildHelicopterTail2();
         popMatrix();
         multRotationX(90);
-        buildTailRotorSystem();
+        TailRotorSystem();
     }
 
-    function buildUpperRotor() {
+    function HelicopterUpperRotor() {
         //Helix holder
         pushMatrix();
-            rotor();
+            buildRotor();
         popMatrix();
         multRotationY(helixRotation);
         //Helix 1
         pushMatrix();
             multTranslation([X_BODY*5/8, Y_ROTOR / 4, 0]); //10 = xBody/2, y = yRotor/4
             multScale([4,1,1]);                // four times larger in x than tail helices
-            helix();
+            buildHelix();
         popMatrix();
         //Helix 2
         pushMatrix();
             multRotationY(120);    
             multTranslation([X_BODY*5/8, Y_ROTOR / 4, 0]); 
             multScale([4,1,1]);
-            helix();
+            buildHelix();
         popMatrix();
         //Helix 3
         multRotationY(240);
         multTranslation([X_BODY*5/8, Y_ROTOR / 4, 0]);
         multScale([4,1,1]);
-        helix();
+        buildHelix();
     }
 
-    function buildLowerBody() {
+    function HelicopterLowerBody() {
         //Support 1
         pushMatrix();    
             multTranslation([-(4*X_SUPPORT_LEG), -Y_SUPPORT_LEG, Z_SUPPORT_LEG*8/3]);   //-6 = -(4xSupportLeg), -5 = -(ySupportLeg), 4 = (8zSupportLeg/3)
             multRotationX(150); 
             multRotationZ(15); 
-            supportLeg();
+            buildSupportLeg();
         popMatrix();
         //Support 2
         pushMatrix();
             multTranslation([4*X_SUPPORT_LEG,-Y_SUPPORT_LEG, Z_SUPPORT_LEG*8/3]);      //6 = (4xSupportLeg), -5 = -(ySupportLeg), 4 = (8zSupportLeg/3)
             multRotationX(150);
             multRotationZ(-15); 
-            supportLeg();
+            buildSupportLeg();
         popMatrix();
         //Support 3
         pushMatrix();
             multTranslation([4*X_SUPPORT_LEG,-Y_SUPPORT_LEG,-(Z_SUPPORT_LEG*8/3)]);     //6 = (4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
             multRotationX(-150);
             multRotationZ(-15); 
-            supportLeg();
+            buildSupportLeg();
         popMatrix();
         //Support 4
         pushMatrix();
             multTranslation([-(4*X_SUPPORT_LEG),-Y_SUPPORT_LEG,-(Z_SUPPORT_LEG*8/3)]);    //-6 = -(4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
             multRotationX(-150);
             multRotationZ(15); 
-            supportLeg();
+            buildSupportLeg();
         popMatrix();
 
         //Landing gear 1
         pushMatrix();
             multTranslation([0,-(X_LANDING_GEAR*3),Z_LANDING_GEAR*2]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), 5 = 2zLandingGear
             multRotationZ(90);
-            landingGear();
+            buildLandingGear();
         popMatrix();
         //Landing gear 2
         multTranslation([0,-7.5,-(Z_LANDING_GEAR*2)]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), -5 = - 2zLandingGear
         multRotationZ(90);
-        landingGear();
+        buildLandingGear();
     }
 
-    function helicopterTail1() {
+    function buildHelicopterTail1() {
 
         multScale([X_BODY*5/4, Y_BODY/2, Z_BODY/2]);  // 25 = xBody+xBody/4, 5 = yBody/2, 5 = zBody/2
 
@@ -263,7 +263,7 @@ function setup(shaders) {
 
     }
 
-    function helicopterTail2() {
+    function buildHelicopterTail2() {
 
         multScale([X_BODY*5/8, Y_BODY/2, Z_BODY/2]);  //12.5 = xTail1/2, 5 = yTail1, 5 = zTail1
 
@@ -273,22 +273,22 @@ function setup(shaders) {
 
     }
 
-    function buildTailRotorSystem() {
+    function TailRotorSystem() {
         pushMatrix();
             multTranslation([0,Y_ROTOR/4,0]); // 5/4 = yRotor/4
-            rotor();
+            buildRotor();
         popMatrix();
         multRotationY(helixRotation);
         pushMatrix();
             multTranslation([X_ROTOR*2, Y_ROTOR/2+Y_ROTOR/8, 0]);  //4 = xRotor*2, 2.5 = yRotor/2 + y translation on rotor/2
-            helix();
+            buildHelix();
         popMatrix();
         multRotationY(180);
         multTranslation([X_ROTOR*2, Y_ROTOR/2+Y_ROTOR/8, 0]); //4 = -xRotor*2, 2.5 = yRotor/2 + y translation on rotor/2
-        helix();
+        buildHelix();
     }
 
-    function rotor() {
+    function buildRotor() {
         multScale([X_ROTOR, Y_ROTOR, Z_ROTOR]);
 
         let color = [240/255,240/255,237/255,1.0]; // Light white
@@ -299,7 +299,7 @@ function setup(shaders) {
         CYLINDER.draw(gl, program, mode);
     }
 
-    function helix() {
+    function buildHelix() {
         multScale([X_HELIX, Y_HELIX, Z_HELIX]);  //12.5 = xTail2/2, 1 = yTail2/5, 2.5 = zTail2/2
 
         let color = [27/255,30/255,35/255,1.0]; // Black
@@ -310,7 +310,7 @@ function setup(shaders) {
         SPHERE.draw(gl, program, mode);
      }
 
-    function supportLeg() {
+    function buildSupportLeg() {
         multScale([X_SUPPORT_LEG, Y_SUPPORT_LEG, Z_SUPPORT_LEG]);
 
         let color = [246/255,190/255,0.0,1.0]; // Gold Yellow
@@ -321,7 +321,7 @@ function setup(shaders) {
         CUBE.draw(gl, program, mode);
     }
 
-    function landingGear() {
+    function buildLandingGear() {
         multScale([X_LANDING_GEAR, Y_LANDING_GEAR, Z_LANDING_GEAR]);
 
         let color = [240/255,240/255,237/255,1.0]; // Light white
@@ -335,19 +335,19 @@ function setup(shaders) {
 
     function Helicopter() {
         pushMatrix();
-            buildMainBody();
+            buildHelicopterMainBody();
         popMatrix();
         pushMatrix();
             multTranslation([X_BODY*3/4, Y_BODY/5, 0]); // 15 = 3xBody/4, 2 = yBody/5
-            buildTail();
+            HelicopterTail();
         popMatrix();
 
         pushMatrix();
             multTranslation([0, Y_BODY/2, 0]); // 5 = yBody/2 
-            buildUpperRotor();
+            HelicopterUpperRotor();
         popMatrix();
 
-        buildLowerBody();
+        HelicopterLowerBody();
     }
 
     function Plane() {
