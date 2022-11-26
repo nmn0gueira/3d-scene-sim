@@ -466,7 +466,7 @@ function setup(shaders) {
     }
 
     function pavement(){
-        multScale([10,1,150]);  // 125 = plane size, 10=* WORLD_SCALE/5
+        multScale([25,1,150]);  // 125 = plane size, 10=* WORLD_SCALE/5
 
         let color = [0.78,0.78,0.78,1.0]; 
         
