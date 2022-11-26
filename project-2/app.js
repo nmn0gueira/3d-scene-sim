@@ -13,6 +13,17 @@ import { GUI } from "../libs/dat.gui.module.js";
 /** @type WebGLRenderingContext */
 let gl;
 
+// Transformation (only values that are independent)
+const X_BODY = 20;
+const Y_BODY = 10;
+const Z_BODY = 10;
+
+const X_HELIX_HOLDER = 2;
+const Y_HELIX_HOLDER = 5;
+const Z_HELIX_HOLDER = 2;
+
+
+// World Physics
 const WORLD_SCALE = 50; 
 const RADIUS = 30;
 const EARTH_GRAVITY = 9.8;
@@ -58,7 +69,7 @@ let front;              // World coordinates of a position directly in front of 
 let boxes = [];         // Boxes the helicopter drops
 
 let velocityDirection;   // Vector with the direction the helicopter is moving
-let linearVelocity;
+let linearVelocity = 0;
 
 
 function setup(shaders) {
@@ -121,7 +132,6 @@ function setup(shaders) {
     }
 
     function setColor(color) {
-        gl.useProgram(program);
 
         const uColor = gl.getUniformLocation(program, "uColor");
 
@@ -130,9 +140,9 @@ function setup(shaders) {
 
     function buildMainBody() {
 
-        multScale([20, 10, 10]);
+        multScale([X_BODY, Y_BODY, Z_BODY]);
 
-        let color = [1.0,0.0,0.0,1.0];  //Red
+        let color = [236/255,41/255,57/255,1.0];  // Imperial Red 237, 41, 57
         setColor(color); 
 
         uploadModelView();
@@ -145,7 +155,7 @@ function setup(shaders) {
         pushMatrix();
             helicopterTail1();
         popMatrix();
-        multTranslation([12.5, 5, 0]); // 12.5 = xTail1/2, 10 = yTail1*2
+        multTranslation([X_BODY*5/8, Y_BODY/2, 0]); // 12.5 = xTail1/2, 5 = yTail1
         multRotationZ(70);  // tail2 rotation 
         pushMatrix();
             helicopterTail2();
@@ -162,19 +172,22 @@ function setup(shaders) {
         multRotationY(helixRotation);
         //Helix 1
         pushMatrix();
-            multTranslation([10, 5 / 4, 0]); //10 = xBody/2, y = yHelixHolder/4
-            mainHelix();
+            multTranslation([12.5, 5 / 4, 0]); //10 = xBody/2, y = yHelixHolder/4
+            multScale([4,1,1]);                // four times larger in x than tail helixes
+            helix();
         popMatrix();
         //Helix 2
         pushMatrix();
             multRotationY(120);    
-            multTranslation([10, 5 / 4, 0]);
-            mainHelix();
+            multTranslation([12.5, 5 / 4, 0]);
+            multScale([4,1,1]);
+            helix();
         popMatrix();
         //Helix 3
         multRotationY(240);
-        multTranslation([10, 5 / 4, 0]);
-        mainHelix();
+        multTranslation([12.5, 5 / 4, 0]);
+        multScale([4,1,1]);
+        helix();
     }
 
     function buildLowerBody() {
@@ -209,19 +222,19 @@ function setup(shaders) {
 
         //Landing gear 1
         pushMatrix();
-            multTranslation([0,-7.5,5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
-            multRotationX(90);
+            multTranslation([0,-7.5,5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 5 = (2zBody/5) + zHelixHolder/2
+            multRotationZ(90);
             landingGear();
         popMatrix();
         //Landing gear 2
-        multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 6 = (2zBody/5) + zHelixHolder/2
-        multRotationX(90);
+        multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 5 = (2zBody/5) + zHelixHolder/2
+        multRotationZ(90);
         landingGear();
     }
 
     function helicopterTail1() {
 
-        multScale([25, 5, 5]);  // 25 = xBody+xBody/4, 5 = yBody/2, 5 = zBody/2
+        multScale([X_BODY*5/4, Y_BODY/2, Z_BODY/2]);  // 25 = xBody+xBody/4, 5 = yBody/2, 5 = zBody/2
 
         uploadModelView();
 
@@ -231,7 +244,7 @@ function setup(shaders) {
 
     function helicopterTail2() {
 
-        multScale([12.5, 5, 5]);  //12.5 = xTail1/2, 5 = yTail1, 5 = zTail1
+        multScale([X_BODY*5/8, Y_BODY/2, Z_BODY/2]);  //12.5 = xTail1/2, 5 = yTail1, 5 = zTail1
 
         uploadModelView();
 
@@ -241,21 +254,23 @@ function setup(shaders) {
 
     function buildTailRotorSystem() {
         pushMatrix();
+            multTranslation([0,Y_HELIX_HOLDER/4,0]); // 5/4 = yHelixHolder/4
             helixHolder();
         popMatrix();
-        multRotationY(helixRotation); // * velocity
+        multRotationY(helixRotation);
         pushMatrix();
-            multTranslation([4, 2.5, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2
-            tailHelix();
+            multTranslation([X_HELIX_HOLDER*2, 2.5+5/8, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
+            helix();
         popMatrix();
-        multTranslation([-4, 2.5, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2
-        tailHelix();
+        multRotationY(180);
+        multTranslation([X_HELIX_HOLDER*2, 2.5+5/8, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
+        helix();
     }
 
     function helixHolder() {
-        multScale([2, 5, 2]);
+        multScale([X_HELIX_HOLDER, Y_HELIX_HOLDER, Z_HELIX_HOLDER]);
 
-        let color = [1.0,1.0,0.0,1.0]; // Yellow
+        let color = [240/255,240/255,237/255,1.0]; // Light white
         setColor(color); 
 
         uploadModelView();
@@ -263,32 +278,21 @@ function setup(shaders) {
         CYLINDER.draw(gl, program, mode);
     }
 
-    function tailHelix() {
+    function helix() {
         multScale([12.5/2, 1, 2.5]);  //12.5 = xTail2/2, 1 = yTail2/5, 2.5 = zTail2/2
 
-        let color = [0.0,0.0,1.0,1.0]; // Blue
+        let color = [27/255,30/255,35/255,1.0]; // Black
         setColor(color);
 
         uploadModelView();
 
         SPHERE.draw(gl, program, mode);
      }
-     
-     function mainHelix() {
-        multScale([25, 1, 2.5]); // 25 = xTailHelix*2, 5 = yTailHelix, 2.5 = zTailHelix
-
-        let color = [0.0,0.0,1.0,0.0];  // Blue
-        setColor(color);    
-
-        uploadModelView();
-
-        SPHERE.draw(gl, program, mode);
-    }
 
     function supportLeg() {
-        multScale([2, 5, 2]);  // metricas do helixHolder
+        multScale([1.5, 5, 1.5]);  // metricas do helixHolder
 
-        let color = [0.2,0.2,0.2,1.0];
+        let color = [246/255,190/255,0.0,1.0]; // Gold Yellow
         setColor(color);
 
         uploadModelView();
@@ -297,9 +301,9 @@ function setup(shaders) {
     }
 
     function landingGear() {
-        multScale([20.0, 2.5, 2.5]); //20 = xBody, 2.5 = yTail1/2, 2.5 = zTail1/2
+        multScale([2.5, 20.0, 2.5]); // 2.5 = yTail1/2, 20 = xBody,  2.5 = zTail1/2
 
-        let color = [1.0,1.0,0.0,1.0]; // Yellow
+        let color = [240/255,240/255,237/255,1.0]; // Light white
         
         setColor(color);
 
@@ -420,10 +424,9 @@ function setup(shaders) {
     //enviroment
     // ps para as cores usei um site, https://antongerdelan.net/colour/
     function lake(){
-        multScale([10,0.5,10]);  // 10 = WORLD_SCALE/5 , 0.5 para ter alguma grossura
+        multScale([20,1,20]);  // 20 = xLakeHolder*4/5, 20 = zLakeHolder*4/5
     
-        
-        let color = [0.0,0.51,0.91,1.0]; 
+        let color = [68/255,187/255,1.0,1.0];    //(68,187,255)
         
         setColor(color);
 
@@ -436,9 +439,9 @@ function setup(shaders) {
     //ver isto
     
     function lakeLimit(){
-        multScale([13,6,13]);  // 13=xLake + 3
-    
-        let color = [0.0,0.0,0.0,1.0]; // Color of the sun
+        multScale([25,7.5,25]);  // 25 = WORLD_SCALE/2, 5 = WORLD_SCALE/5
+
+        let color = [0.57,0.56,0.56,1.0]; // 145, 142, 133 Stone
         
         setColor(color);
 
@@ -449,8 +452,9 @@ function setup(shaders) {
     }
 
     function circularPavement(){
-        multScale([35,0.5,35]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
+        multScale([50,1,50]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
     
+        
         let color = [0.78,0.78,0.78,1.0]; 
         
         setColor(color);
@@ -462,7 +466,7 @@ function setup(shaders) {
     }
 
     function pavement(){
-        multScale([10,0.5,150-0.1]);  // 125 = plane size, 10=* WORLD_SCALE/5, 0.5 para ter alguma grossura
+        multScale([25,1,150]);  // 125 = plane size, 10=* WORLD_SCALE/5
 
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -838,26 +842,24 @@ function setup(shaders) {
             popMatrix();
 
             //enviroment 
-            
-            
-            pushMatrix();
-            multTranslation([0,0.8,0]);
-                lakeLimit();   //LAKE HOLDER
-            popMatrix();
-        pushMatrix();
-        multTranslation([0,0.3,0]);
-            pushMatrix();
-            multTranslation([0,0.7,0]);   
+            //ps pode ser melhorado como foi feto com as outras primitivas
+            pushMatrix();  
+                multTranslation([0,1,0]);  // 1 = yPlane
                 lake();         //LAKE
             popMatrix();
+            pushMatrix();
+                multTranslation([0,1,0]);  
+                lakeLimit();         //LAKE
+            popMatrix();
             
             pushMatrix();
+                multTranslation([0,0.5,0]);     // 0.5 = yPlane/2
                 circularPavement(); //CIRCULAR PAVEMENT
             popMatrix();
 
             pushMatrix();
+                multTranslation([0,0.5,0]);     // 0.5 = yPlane/2
                 pavement();         // PAVEMENT
-            popMatrix();
             popMatrix();
             
             
@@ -1737,14 +1739,13 @@ function setup(shaders) {
 
 
         pushMatrix();
-                multTranslation([-30,5/2,30]); // 5/2=halfTrunk height, outros valores sao random
-                pushMatrix();
-                    treeTrunk1();
-                popMatrix();
-                multTranslation([0,7/2,0]); // 7/2=halfLeaves height
-                pushMatrix();
-                    treeLeaves1();
-                popMatrix();
+            multTranslation([-30,5/2,30]); // 5/2=halfTrunk height, outros valores sao random
+            pushMatrix();
+                treeTrunk1();
+            popMatrix();
+            multTranslation([0,7/2,0]); // 7/2=halfLeaves height
+            pushMatrix();
+                treeLeaves1();
             popMatrix();
 
 
@@ -1799,8 +1800,8 @@ function setup(shaders) {
         pushMatrix();         
             multRotationY(rotation); // rotation around the Y axis
             multTranslation([RADIUS,0.0,0.0]); // helicopter translation to rotate Y axis with 30 radius
-            //                                              0.5                          3                             0.5             
-            multTranslation([0,4+height,0.0]); //4 = ((yPlano/2) + (0.4*translaçao em y de landing gear) + (0.4*yLandingGear/2))
+            //                                              0.5                          3                        rotateZ     0.5             
+            multTranslation([0,4+height,0.0]); //4 = ((yPlano/2) + (0.4*translaçao em y de landing gear) + (0.4*yLandingGear/2)) TOMAR EM CONTA QUE COMO LANDING GEAR RODA EM Z AQUI TOU A REFERIR ME AO x
             multRotationY(-90);
             multRotationZ(inclination);
             mModelPoint();          // Updates current position
@@ -1835,13 +1836,18 @@ function setup(shaders) {
                         mode = gl.TRIANGLES;
                         break;
                     case 'ArrowUp':
-                        if (height < MAX_HEIGHT) {
+                        // The helicopter only takes off if the helixes are rotating at maximum speed
+                        if (height < MAX_HEIGHT && helixAngularVelocity == MAX_HELIX_ANGULAR_VELOCITY) {
                             height += 0.25;
+                        }
+                        else if (helixAngularVelocity < MAX_HELIX_ANGULAR_VELOCITY) {
+                            helixAngularVelocity = helixAngularVelocity + dt*HELIX_ANGULAR_ACCELERATION > MAX_HELIX_ANGULAR_VELOCITY ? MAX_HELIX_ANGULAR_VELOCITY : helixAngularVelocity + dt*HELIX_ANGULAR_ACCELERATION;
+                            helixRotation += helixAngularVelocity*dt;
                         }
                         break;
                     case 'ArrowDown':
-                        if (height > 0) {
-                            height -= 0.25;
+                        if (height > 0 ) {                       
+                            height = height - 0.25;
                         }
                         break;
                     case 'ArrowLeft':
@@ -1877,7 +1883,7 @@ function setup(shaders) {
                         break;
                 }
             }
-            else //Key is not pressed
+            else { //Key is not pressed
                 /*
                  * If ArrowLeft is being pressed and the helicopter descends to ground level 
                  * the landing will be adjusted as well
@@ -1885,7 +1891,7 @@ function setup(shaders) {
                 if (k == 'ArrowLeft' || height == 0) {
                     if (angularVelocity > 0) {
                         //If the next value is below the min value set at min value
-                        angularVelocity = angularVelocity - ANGULAR_ACCELERATION*dt < 0 ? 0 : angularVelocity-dt*ANGULAR_ACCELERATION;
+                        angularVelocity = angularVelocity - dt*ANGULAR_ACCELERATION < 0 ? 0 : angularVelocity-dt*ANGULAR_ACCELERATION;
                         rotation += angularVelocity*dt;
                     }
 
@@ -1893,20 +1899,22 @@ function setup(shaders) {
                         //If the next value is below the min value set at min value
                         inclination = inclination - dt*HELICOPTER_INCLINATION < 0 ? 0 : inclination - dt*HELICOPTER_INCLINATION;
                 }
+                // When the helicopter is on the ground and ArrowUp is not being pressed the helixes will progressively stop rotating
+                if (k == 'ArrowUp' && height == 0 && helixAngularVelocity > 0) {
+                    //If the next value is below the min value set at min value
+                    helixAngularVelocity = helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION < 0 ? 0 : helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION;
+                    helixRotation += dt*helixAngularVelocity;
+                }
+            }
 
         }    
         
         
-        if (height == 0 && helixAngularVelocity > 0)
-            //If the next value is below the min value set at min value
-            helixAngularVelocity = helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION < 0 ? 0 : helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION;
-
-        else if (height > 0 && helixAngularVelocity < MAX_HELIX_ANGULAR_VELOCITY)
+        if (height > 0) {
             //If the next value is above the max value set at max value
             helixAngularVelocity = helixAngularVelocity + dt*HELIX_ANGULAR_ACCELERATION > MAX_HELIX_ANGULAR_VELOCITY ? MAX_HELIX_ANGULAR_VELOCITY : helixAngularVelocity + dt*HELIX_ANGULAR_ACCELERATION;
-
-
-        helixRotation += dt*helixAngularVelocity;
+            helixRotation += dt*helixAngularVelocity;
+        }
         
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -1948,7 +1956,8 @@ function setup(shaders) {
         let movementAngle = Math.abs(lastMovement-rotation);
         // Angular velocity * RADIUS
         linearVelocity= Math.tan(movementAngle*Math.PI/180)*RADIUS;     
-     
+
+        console.log(helixRotation);
     }
 }
 
