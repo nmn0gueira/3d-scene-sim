@@ -14,6 +14,7 @@ import { GUI } from "../libs/dat.gui.module.js";
 let gl;
 
 // Transformation (only values that are independent)
+// Helicopter
 const X_BODY = 20;
 const Y_BODY = 10;
 const Z_BODY = 10;
@@ -26,6 +27,23 @@ const X_HELIX = 12.5/2;
 const Y_HELIX = 1;
 const Z_HELIX = 2.5;
 
+const X_SUPPORT_LEG = 1.5;
+const Y_SUPPORT_LEG = 5;
+const Z_SUPPORT_LEG = 1.5;
+
+const X_LANDING_GEAR = 2.5;
+const Y_LANDING_GEAR = 20;
+const Z_LANDING_GEAR = 2.5;
+
+// Box
+const X_BOX = 3;
+const Y_BOX = 3;
+const Z_BOX = 3;
+
+// Plane
+const X_PLANE = 150;
+const Y_PLANE = 1;
+const Z_PLANE = 150;
 
 // World Physics
 const WORLD_SCALE = 50; 
@@ -197,28 +215,28 @@ function setup(shaders) {
     function buildLowerBody() {
         //Support 1
         pushMatrix();    
-            multTranslation([-6, -5, 4]);   //-6 = -(3xBody/10), -5 = -(yBody/2), 4 = (2zBody/5)
+            multTranslation([-(4*X_SUPPORT_LEG), -Y_SUPPORT_LEG, Z_SUPPORT_LEG*8/3]);   //-6 = -(4xSupportLeg), -5 = -(ySupportLeg), 4 = (8zSupportLeg/3)
             multRotationX(150); 
             multRotationZ(15); 
             supportLeg();
         popMatrix();
         //Support 2
         pushMatrix();
-            multTranslation([6,-5,4]);      //6 = (3xBody/10), -5 = -(yBody/2), 4 = (2zBody/5)
+            multTranslation([4*X_SUPPORT_LEG,-Y_SUPPORT_LEG, Z_SUPPORT_LEG*8/3]);      //6 = (4xSupportLeg), -5 = -(ySupportLeg), 4 = (8zSupportLeg/3)
             multRotationX(150);
             multRotationZ(-15); 
             supportLeg();
         popMatrix();
         //Support 3
         pushMatrix();
-            multTranslation([6,-5,-4]);     //6 = (3xBody/10), -5 = -(yBody/2), -4 = -(2zBody/5)
+            multTranslation([4*X_SUPPORT_LEG,-Y_SUPPORT_LEG,-(Z_SUPPORT_LEG*8/3)]);     //6 = (4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
             multRotationX(-150);
             multRotationZ(-15); 
             supportLeg();
         popMatrix();
         //Support 4
         pushMatrix();
-            multTranslation([-6,-5,-4]);    //-6 = -(3xBody/10), -5 = -(yBody/2), -4 = -(2zBody/5)
+            multTranslation([-(4*X_SUPPORT_LEG),-Y_SUPPORT_LEG,-(Z_SUPPORT_LEG*8/3)]);    //-6 = -(4xSupportLeg), -5 = -(ySupportLeg), -4 = -(8zSupportLeg/3)
             multRotationX(-150);
             multRotationZ(15); 
             supportLeg();
@@ -226,12 +244,12 @@ function setup(shaders) {
 
         //Landing gear 1
         pushMatrix();
-            multTranslation([0,-7.5,5]); //-7.5 = -(yBody/2 + yRotor/2), 5 = (2zBody/5) + zRotor/2
+            multTranslation([0,-(X_LANDING_GEAR*3),Z_LANDING_GEAR*2]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), 5 = 2zLandingGear
             multRotationZ(90);
             landingGear();
         popMatrix();
         //Landing gear 2
-        multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yRotor/2), 5 = (2zBody/5) + zRotor/2
+        multTranslation([0,-7.5,-(Z_LANDING_GEAR*2)]); // (Because it rotates in z) -7.5 = -(xLandingGear*3), -5 = - 2zLandingGear
         multRotationZ(90);
         landingGear();
     }
@@ -294,7 +312,7 @@ function setup(shaders) {
      }
 
     function supportLeg() {
-        multScale([1.5, 5, 1.5]);
+        multScale([X_SUPPORT_LEG, Y_SUPPORT_LEG, Z_SUPPORT_LEG]);
 
         let color = [246/255,190/255,0.0,1.0]; // Gold Yellow
         setColor(color);
@@ -305,7 +323,7 @@ function setup(shaders) {
     }
 
     function landingGear() {
-        multScale([2.5, 20.0, 2.5]); // 2.5 = yTail1/2, 20 = xBody,  2.5 = zTail1/2
+        multScale([X_LANDING_GEAR, Y_LANDING_GEAR, Z_LANDING_GEAR]);
 
         let color = [240/255,240/255,237/255,1.0]; // Light white
         
@@ -334,7 +352,7 @@ function setup(shaders) {
     }
 
     function Plane() {
-        multScale([150,1,150]); // 150 = 3* WORLD_SCALE
+        multScale([X_PLANE,Y_PLANE,Z_PLANE]);
 
         let color =[146/255,193/255, 46/255,1.0];   // 146,193,46 Green 1
         //let color = [68/255,109/255,68/255,1.0];   // 68,109,68 Green 2 
@@ -350,7 +368,7 @@ function setup(shaders) {
     }
 
     function box() {
-        multScale([3,3,3]); //20/5 10/5 5/5
+        multScale([X_BOX,Y_BOX,Z_BOX]); //20/5 10/5 5/5
 
         let color = [0.66,0.41,0.28,1.0]; // Green
         
@@ -360,18 +378,6 @@ function setup(shaders) {
 
         CUBE.draw(gl, program, mode);
         
-    }
-
-    function Sun() {
-        multScale([10,10,10]);  // 10 = WORLD_SCALE/5
-  
-        let color = [253/255,184/255,19/255,1.0]; // Color of the sun
-        
-        setColor(color);
-
-        uploadModelView();
-
-        SPHERE.draw(gl, program, mode);
     }
 
     // Used only right before drawing the helicopter
@@ -437,7 +443,7 @@ function setup(shaders) {
     //ver isto
     
     function lakeLimit(){
-        multScale([25,7.5,25]);  // 25 = WORLD_SCALE/2, 5 = WORLD_SCALE/5
+        multScale([25,7.5,25]); 
 
         let color = [0.57,0.56,0.56,1.0]; // 145, 142, 133 Stone
         
@@ -450,7 +456,7 @@ function setup(shaders) {
     }
 
     function circularPavement(){
-        multScale([50,1,50]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
+        multScale([50,1,50]);
     
         
         let color = [0.78,0.78,0.78,1.0]; 
@@ -822,51 +828,693 @@ function setup(shaders) {
         PYRAMID.draw(gl, program, mode);
      }
 
-    
+    function LakeAndPavement() {
+            multTranslation([0,1,0]);  // 1 = yPlane
+            pushMatrix();
+                lake();         //LAKE
+            popMatrix();
+            pushMatrix(); 
+                lakeLimit();         //LAKE
+            popMatrix();  
+            multTranslation([0,-0.75,0]);     // 0.75 = yTranslation in lake - yPlane/4 
+            pushMatrix();
+                circularPavement(); //CIRCULAR PAVEMENT
+            popMatrix();
+            pavement();         // PAVEMENT
+    }
+
+    function Building() {
+        multTranslation([0, 20 / 2, -64.4]); // 20/2=buildingBase height/2 para subir,52=150/2(half Plane)-125/6/2(half buildingbase width)
+        pushMatrix();
+            buildingBase();
+        popMatrix();
+        
+        pushMatrix();
+        multTranslation([0, 10, 0]);
+        multRotationX(45);
+        baseRoof();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([75 / 2, 0, 125 / 12]);
+        corner();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-75 / 2, 0, 125 / 12]);
+        corner();
+        popMatrix();
+
+        //windows base FRONT LEFT  side UP
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 2, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 7, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 12, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 17, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        //windows base FRONT LEFT side DOWN
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 2, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 7, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 12, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 17, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        //windows base FRONT RIGHT side UP
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 2, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 7, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 12, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 17, 20 / 3, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        //windows FRONT RIGHT side DOWN
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 2, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 7, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 12, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 17, -2, 125 / 12 - 0.2]);
+        normalWindow();
+        popMatrix();
+
+        //windows base BEHIND LEFT side UP
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 2, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 7, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 12, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 17, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        //windows base BEHIND LEFT side DOWN
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 2, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 7, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 12, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-25 / 2 - 20 / 12 - 17, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        //windows base BEHIND RIGHT side UP
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 2, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 7, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 12, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 17, 20 / 3, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        //windows base BEHIND RIGHT side DOWN
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 2, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 7, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 12, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([25 / 2 + 20 / 12 + 17, -2, -125 / 12 + 0.2]);
+        normalWindow();
+        popMatrix();
+
+
+        //windows LEFT side 
+
+        pushMatrix();
+        multTranslation([-75 / 2 + 0.2, 20 / 3, -125 / 12 + 5]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-75 / 2 + 0.2, 20 / 3, -125 / 12 + 10]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-75 / 2 + 0.2, 20 / 3, -125 / 12 + 15]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+        //windows LEFT side DOWN
+        pushMatrix();
+        multTranslation([-75 / 2 + 0.2, -2, -125 / 12 + 5]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-75 / 2 + 0.2, -2, -125 / 12 + 10]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-75 / 2 + 0.2, -2, -125 / 12 + 15]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+
+
+
+        //windows RIGHT side UP
+
+        pushMatrix();
+        multTranslation([75 / 2 - 0.2, 20 / 3, -125 / 12 + 5]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([75 / 2 - 0.2, 20 / 3, -125 / 12 + 10]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([75 / 2 - 0.2, 20 / 3, -125 / 12 + 15]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        //windows RIGHT side DOWN
+        pushMatrix();
+        multTranslation([75 / 2 - 0.2, -2, -125 / 12 + 5]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([75 / 2 - 0.2, -2, -125 / 12 + 10]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([75 / 2 - 0.2, -2, -125 / 12 + 15]);
+        multRotationY(90);
+        normalWindow();
+        popMatrix();
+
+
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([0, 20 / 2, -62.4]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
+        pushMatrix();
+        buildingCenter();
+        popMatrix();
+
+
+        //CENTER windows FRONT
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (3 * 25) / 8, 20 / 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        //center
+        pushMatrix();
+        multTranslation([125 / 10 - (4 * 25) / 8, 20 / 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (3 * 25) / 8, 20 / 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+
+        //second Row
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4 - 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4 - 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (3 * 25) / 8, 20 / 4 - 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        //center
+        pushMatrix();
+        multTranslation([125 / 10 - (4 * 25) / 8, 20 / 4 - 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4 - 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4 - 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (3 * 25) / 8, 20 / 4 - 4, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+
+        //third Row
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4 - 8, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4 - 8, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (3 * 25) / 8, 20 / 4 - 8, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        //center
+        pushMatrix();
+        multTranslation([125 / 10 - (4 * 25) / 8, 20 / 4 - 8, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4 - 8, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4 - 8, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (3 * 25) / 8, 20 / 4 - 8, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+
+
+        //forth row
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4 - 12, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4 - 12, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4 - 12, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4 - 12, 25 / 2 + 1.5 - 0.2])
+        smallWindow();
+        popMatrix();
+
+
+
+        //CENTER windows BEHIND
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (3 * 25) / 8, 20 / 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //center
+        pushMatrix();
+        multTranslation([125 / 10 - (4 * 25) / 8, 20 / 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (3 * 25) / 8, 20 / 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+
+        //second Row
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4 - 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4 - 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (3 * 25) / 8, 20 / 4 - 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //center
+        pushMatrix();
+        multTranslation([125 / 10 - (4 * 25) / 8, 20 / 4 - 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4 - 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4 - 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (3 * 25) / 8, 20 / 4 - 4, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+
+        //third Row
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4 - 8, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4 - 8, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (3 * 25) / 8, 20 / 4 - 8, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //center
+        pushMatrix();
+        multTranslation([125 / 10 - (4 * 25) / 8, 20 / 4 - 8, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4 - 8, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4 - 8, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (3 * 25) / 8, 20 / 4 - 8, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+
+
+
+        //forth row
+        //right
+        pushMatrix();
+        multTranslation([125 / 10 - 25 / 8, 20 / 4 - 12, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (2 * 25) / 8, 20 / 4 - 12, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([125 / 10 - (3 * 25) / 8, 20 / 4 - 12, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //center
+        pushMatrix();
+        multTranslation([125 / 10 - (4 * 25) / 8, 20 / 4 - 12, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        //left
+        pushMatrix();
+        multTranslation([-125 / 10 + 25 / 8, 20 / 4 - 12, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (2 * 25) / 8, 20 / 4 - 12, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-125 / 10 + (3 * 25) / 8, 20 / 4 - 12, -25 / 2 + 0.2])
+        smallWindow();
+        popMatrix();
+
+        multTranslation([0, 20 / 2, 0]);
+
+        //roof
+        pushMatrix();
+        multRotationZ(45);
+        centerRoof();
+        popMatrix();
+
+
+        multTranslation([0, 17.7 / 4, 125 / 10 - 0.2]);
+        multRotationX(90);
+
+        pushMatrix();
+        roofWindow();
+        popMatrix();
+
+        pushMatrix();
+        roofWindowLimit();
+        popMatrix();
+
+        popMatrix();
+
+
+
+
+        //12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
+        pushMatrix();
+        multTranslation([0, 20 / 2, -150 / 2 + 25 - 0.9]);
+        pushMatrix();
+        buildingEntrance();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([0, -20 / 2 + 12.5 / 6, 2.5 - 0.4]);
+        //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
+        buildingDoors();
+        popMatrix();
+        popMatrix();
+
+
+        pushMatrix();
+        multTranslation([25 / 2, 20 / 2, -150 / 2 + 25 + 12.5 / 2 + 0.5]);
+        pushMatrix();
+        buildingPilar();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-7.5, 0, 0]);
+        buildingPilar();
+        popMatrix();
+
+        pushMatrix();
+        multTranslation([-10 - 7.5, 0, 0]);
+        buildingPilar();
+        popMatrix();
+
+
+        pushMatrix();
+        multTranslation([-7.5 - 10 - 7.5, 0, 0]);
+        buildingPilar();
+        popMatrix();
+        multTranslation([-12.5, 20 / 2 - 3 / 2 + 0.1, -2.9]);
+        pushMatrix();
+        entranceRoof();
+        popMatrix();
+
+
+    }
 
 
     function World() {
-        //Sun (EXPERIMENTAL)
-        //pushMatrix();
-        //    multTranslation([50, 30,0]);    // 50 = WORLD_SCALE, 30 = 3WORLD_SCALE/5
-        //    Sun();
-        //popMatrix();
 
-        
         //SURFACE  
         pushMatrix();
             pushMatrix();
                 Plane();        //PLANE
             popMatrix();
 
-            //enviroment 
-            //ps pode ser melhorado como foi feto com as outras primitivas
-            pushMatrix();  
-                multTranslation([0,1,0]);  // 1 = yPlane
-                lake();         //LAKE
-            popMatrix();
+            //LakeAndPavement
             pushMatrix();
-                multTranslation([0,1,0]);  
-                lakeLimit();         //LAKE
+                LakeAndPavement();
             popMatrix();
             
-            pushMatrix();
-                multTranslation([0,0.25,0]);     // 0.5 = yPlane/2
-                circularPavement(); //CIRCULAR PAVEMENT
-            popMatrix();
-
-            pushMatrix();
-                multTranslation([0,0.25,0]);     // 0.5 = yPlane/2
-                pavement();         // PAVEMENT
-            popMatrix();
-            
-            
-
-            
-
-        
-
-            //bench (REVER ISTO MAIS TARDE)
+            //benches (REVER ISTO MAIS TARDE)
             pushMatrix();
                 multTranslation([25/2+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
                 //0.7 para ficar com parte da altura "enterrada no Plane", 50 valor random para ficar quase no limite do plane
@@ -1037,664 +1685,10 @@ function setup(shaders) {
             popMatrix();
         
 
-        //building
-            pushMatrix();
-                multTranslation([0, 20 / 2, -64.4]); // 20/2=buildingBase height/2 para subir,52=150/2(half Plane)-125/6/2(half buildingbase width)
-                pushMatrix();
-                   buildingBase();
-                popMatrix();
-
-                
-                pushMatrix();
-                   multTranslation([0,10,0]);
-                   multRotationX(45);
-                   baseRoof();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([75/2,0,125/12]);
-                   corner();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-75/2,0,125/12]);
-                   corner();
-                popMatrix();
-                
-                //windows base FRONT LEFT  side UP
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 2 ,20/3,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 7,20/3,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 12,20/3,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-                
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 17,20/3,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-               //windows base FRONT LEFT side DOWN
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 2 ,-2,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 7,-2,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 12,-2,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-                
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 17,-2,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-               //windows base FRONT RIGHT side UP
-                pushMatrix();
-                   multTranslation([25/2 + 20/12 + 2 ,20/3,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([25/2 + 20/12 + 7,20/3,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([25/2 + 20/12 + 12,20/3,125/12 -0.2]);
-                   normalWindow();
-                popMatrix();
-             
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 17,20/3,125/12 -0.2]);
-                  normalWindow();
-                popMatrix();
-
-                //windows FRONT RIGHT side DOWN
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 2 ,-2,125/12 -0.2]);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 7,-2,125/12 -0.2]);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 12,-2,125/12 -0.2]);
-                  normalWindow();
-                popMatrix();
-             
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 17,-2,125/12 -0.2]);
-                  normalWindow();
-                popMatrix();
-
-               //windows base BEHIND LEFT side UP
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 2 ,20/3,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 7,20/3,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 12,20/3,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-                
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 17,20/3,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-               //windows base BEHIND LEFT side DOWN
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 2 ,-2,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 7,-2,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 12,-2,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-                
-                pushMatrix();
-                   multTranslation([-25/2 - 20/12 - 17,-2,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-               //windows base BEHIND RIGHT side UP
-                pushMatrix();
-                   multTranslation([25/2 + 20/12 + 2 ,20/3,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([25/2 + 20/12 + 7,20/3,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                   multTranslation([25/2 + 20/12 + 12,20/3,-125/12 +0.2]);
-                   normalWindow();
-                popMatrix();
-             
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 17,20/3,-125/12 +0.2]);
-                  normalWindow();
-                popMatrix();
-
-                //windows base BEHIND RIGHT side DOWN
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 2 ,-2,-125/12 +0.2]);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 7,-2,-125/12 +0.2]);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 12,-2,-125/12 +0.2]);
-                  normalWindow();
-                popMatrix();
-             
-                pushMatrix();
-                  multTranslation([25/2 + 20/12 + 17,-2,-125/12 +0.2]);
-                  normalWindow();
-                popMatrix();
-
-
-                //windows LEFT side 
-
-                pushMatrix();
-                  multTranslation([-75/2+0.2,20/3,-125/12+5]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([-75/2+0.2,20/3,-125/12+10]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([-75/2+0.2,20/3,-125/12+15]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-               //windows LEFT side DOWN
-                pushMatrix();
-                  multTranslation([-75/2+0.2,-2,-125/12+5]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([-75/2+0.2,-2,-125/12+10]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([-75/2+0.2,-2,-125/12+15]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-
-
-
-                //windows RIGHT side UP
-
-                pushMatrix();
-                  multTranslation([75/2-0.2,20/3,-125/12+5]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([75/2-0.2,20/3,-125/12+10]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([75/2-0.2,20/3,-125/12+15]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-               //windows RIGHT side DOWN
-                pushMatrix();
-                  multTranslation([75/2-0.2,-2,-125/12+5]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([75/2-0.2,-2,-125/12+10]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
-                pushMatrix();
-                  multTranslation([75/2-0.2,-2,-125/12+15]);
-                  multRotationY(90);
-                  normalWindow();
-                popMatrix();
-
- 
+            //building
+            pushMatrix(),
+                Building();
             popMatrix();
-
-            pushMatrix();
-                multTranslation([0, 20 / 2, -62.4]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
-                pushMatrix();
-                    buildingCenter();
-                popMatrix(); 
-                
-                
-                //CENTER windows FRONT
-                //right
-                pushMatrix();
-                    multTranslation([125/10 - 25/8,20/4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                    multTranslation([125/10-(2*25)/8,20/4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                    multTranslation([125/10-(3*25)/8,20/4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-               //center
-                pushMatrix();
-                    multTranslation([125/10-(4*25)/8,20/4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                    multTranslation([-125/10 + 25/8,20/4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                    multTranslation([-125/10 + (2*25)/8,20/4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (3*25)/8,20/4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-
-               //second Row
-               //right
-                pushMatrix();
-                multTranslation([125/10 - 25/8,20/4 - 4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(2*25)/8,20/4 - 4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(3*25)/8,20/4 - 4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //center
-                pushMatrix();
-                multTranslation([125/10-(4*25)/8,20/4 - 4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                multTranslation([-125/10 + 25/8,20/4 - 4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (2*25)/8,20/4 - 4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (3*25)/8,20/4 - 4,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-
-                //third Row
-                //right
-                pushMatrix();
-                multTranslation([125/10 - 25/8,20/4 -8,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(2*25)/8,20/4 - 8,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(3*25)/8,20/4 - 8,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //center
-                pushMatrix();
-                multTranslation([125/10-(4*25)/8,20/4 - 8,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                multTranslation([-125/10 + 25/8,20/4 - 8,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (2*25)/8,20/4 - 8,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (3*25)/8,20/4 - 8,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-
-
-                //forth row
-                //right
-                pushMatrix();
-                multTranslation([125/10 - 25/8,20/4 -12,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(2*25)/8,20/4 - 12,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                multTranslation([-125/10 + 25/8,20/4 - 12,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (2*25)/8,20/4 - 12,25/2+1.5-0.2])
-                    smallWindow();
-                popMatrix();
-
-
-
-                //CENTER windows BEHIND
-                //right
-                pushMatrix();
-                multTranslation([125/10 - 25/8,20/4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(2*25)/8,20/4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(3*25)/8,20/4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                //center
-                pushMatrix();
-                multTranslation([125/10-(4*25)/8,20/4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                multTranslation([-125/10 + 25/8,20/4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (2*25)/8,20/4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (3*25)/8,20/4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-
-               //second Row
-               //right
-                pushMatrix();
-                multTranslation([125/10 - 25/8,20/4 - 4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(2*25)/8,20/4 - 4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(3*25)/8,20/4 - 4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                //center
-                pushMatrix();
-                multTranslation([125/10-(4*25)/8,20/4 - 4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                multTranslation([-125/10 + 25/8,20/4 - 4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (2*25)/8,20/4 - 4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (3*25)/8,20/4 - 4,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-
-                //third Row
-                //right
-                pushMatrix();
-                multTranslation([125/10 - 25/8,20/4 -8,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(2*25)/8,20/4 - 8,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(3*25)/8,20/4 - 8,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                //center
-                pushMatrix();
-                multTranslation([125/10-(4*25)/8,20/4 - 8,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                multTranslation([-125/10 + 25/8,20/4 - 8,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (2*25)/8,20/4 - 8,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (3*25)/8,20/4 - 8,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                
-
-
-                //forth row
-                //right
-                pushMatrix();
-                multTranslation([125/10 - 25/8,20/4 -12,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(2*25)/8,20/4 - 12,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([125/10-(3*25)/8,20/4 - 12,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                //center
-                pushMatrix();
-                multTranslation([125/10-(4*25)/8,20/4 - 12,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-                
-                //left
-                pushMatrix();
-                multTranslation([-125/10 + 25/8,20/4 - 12,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (2*25)/8,20/4 - 12,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                pushMatrix();
-                multTranslation([-125/10 + (3*25)/8,20/4 - 12,-25/2+0.2])
-                    smallWindow();
-                popMatrix();
-
-                multTranslation([0,20/2,0]); 
-                    
-                //roof
-                    pushMatrix();
-                    multRotationZ(45); 
-                        centerRoof();
-                    popMatrix();
-
-
-                    multTranslation([0,17.7/4,125/10-0.2]);
-                    multRotationX(90);
-
-                        pushMatrix();
-                            roofWindow();
-                        popMatrix();
-
-                        pushMatrix();
-                            roofWindowLimit();
-                        popMatrix();
-
-            popMatrix();
-
-
-
-            
-            //12.5/2=buildingBase height/2 para subir, 125/2+25=halfPlane + WORLD_SCALE/2
-            pushMatrix();
-            multTranslation([0, 20 / 2, -150/ 2 + 25-0.9]);
-                pushMatrix();
-                    buildingEntrance();
-                popMatrix();
-
-            pushMatrix();
-                multTranslation([0, -20/2 + 12.5/6, 2.5-0.4]);
-                //12/5/6 = Doors halfheight, -125/2(halfPLANE) + 25(buildingCenter width) + 5/2(half buildingEntrance width) -0.4 (halfdoors width -0.1)
-                buildingDoors();
-            popMatrix();
-            popMatrix();  
-
-
-            pushMatrix();
-                multTranslation([25 / 2,20 / 2,-150 / 2 + 25 + 12.5 / 2 +0.5]);
-                pushMatrix();
-                    buildingPilar();
-                popMatrix();
-
-                pushMatrix();
-                    multTranslation([-7.5,0,0]);
-                    buildingPilar();
-                popMatrix();
-
-                 pushMatrix();
-                    multTranslation([-10-7.5,0,0]);
-                    buildingPilar();
-                popMatrix();
-
-                
-                pushMatrix();
-                    multTranslation([-7.5-10-7.5,0,0]);
-                    buildingPilar();
-                popMatrix();
-                multTranslation([-12.5,20/2-3/2+0.1,-2.9]);
-                    pushMatrix(); 
-                        entranceRoof();
-                    popMatrix();
-                    
-            popMatrix();
-
 
             //trees
             pushMatrix();
