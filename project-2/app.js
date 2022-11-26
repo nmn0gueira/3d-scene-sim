@@ -439,9 +439,9 @@ function setup(shaders) {
     //ver isto
     
     function lakeLimit(){
-        multScale([13,6,13]);  // 10 = WORLD_SCALE/5
-    
-        let color = [0.0,0.0,0.0,1.0]; // Color of the sun
+        multScale([25,7.5,25]);  // 25 = WORLD_SCALE/2, 5 = WORLD_SCALE/5
+
+        let color = [0.57,0.56,0.56,1.0]; // 145, 142, 133 Stone
         
         setColor(color);
 
@@ -450,10 +450,9 @@ function setup(shaders) {
         TORUS.draw(gl, program, mode);
 
     }
-    }
 
     function circularPavement(){
-        multScale([35,0.5,35]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
+        multScale([50,1,50]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
     
         
         let color = [0.78,0.78,0.78,1.0]; 
@@ -848,10 +847,9 @@ function setup(shaders) {
                 multTranslation([0,1,0]);  // 1 = yPlane
                 lake();         //LAKE
             popMatrix();
-        pushMatrix();
-        multTranslation([0,0.3,0]);
-            pushMatrix();   
-                lake();         //LAKE
+            pushMatrix();
+                multTranslation([0,1,0]);  
+                lakeLimit();         //LAKE
             popMatrix();
             
             pushMatrix();
@@ -862,7 +860,6 @@ function setup(shaders) {
             pushMatrix();
                 multTranslation([0,0.5,0]);     // 0.5 = yPlane/2
                 pavement();         // PAVEMENT
-            popMatrix();
             popMatrix();
             
             
@@ -1742,14 +1739,13 @@ function setup(shaders) {
 
 
         pushMatrix();
-                multTranslation([-30,5/2,30]); // 5/2=halfTrunk height, outros valores sao random
-                pushMatrix();
-                    treeTrunk1();
-                popMatrix();
-                multTranslation([0,7/2,0]); // 7/2=halfLeaves height
-                pushMatrix();
-                    treeLeaves1();
-                popMatrix();
+            multTranslation([-30,5/2,30]); // 5/2=halfTrunk height, outros valores sao random
+            pushMatrix();
+                treeTrunk1();
+            popMatrix();
+            multTranslation([0,7/2,0]); // 7/2=halfLeaves height
+            pushMatrix();
+                treeLeaves1();
             popMatrix();
 
 
@@ -1962,7 +1958,6 @@ function setup(shaders) {
         linearVelocity= Math.tan(movementAngle*Math.PI/180)*RADIUS;     
 
         console.log(helixRotation);
-     
     }
 }
 
