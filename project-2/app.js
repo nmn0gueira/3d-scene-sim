@@ -943,7 +943,7 @@ function setup(shaders) {
 
            
             pushMatrix();
-            multTranslation([60,2.5,40]);
+            multTranslation([60,2.5,30]);
             
             pushMatrix();
                 table(); //Table1
@@ -1858,6 +1858,20 @@ function setup(shaders) {
 
          pushMatrix();
             multTranslation([-50,11/2,-55]);
+             pushMatrix();
+             treeTrunk3();
+             popMatrix();
+
+             multTranslation([0,11/2,0]); //9/2=halfLeaves height
+             pushMatrix();
+                 treeLeaves3();
+             popMatrix();
+         popMatrix();
+
+
+
+         pushMatrix();
+            multTranslation([50,11/2,-30]);
              pushMatrix();
              treeTrunk3();
              popMatrix();
