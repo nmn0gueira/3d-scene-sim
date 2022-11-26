@@ -585,7 +585,7 @@ function setup(shaders) {
     function buildNormalWindow(){
         multScale([20/6,20/6,0.5]);  
 
-        let color = [0.0,0.40,0.98,1.0]; 
+        let color = [104/255,200/255,230/255,1.0]; // 104,200,230
         
         setColor(color);
 
@@ -597,7 +597,7 @@ function setup(shaders) {
     function buildSmallWindow(){
         multScale([20/12,20/12,0.5]);  
 
-        let color = [0.0,0.40,0.98,1.0]; 
+        let color = [104/255,200/255,230/255,1.0]; 
         
         setColor(color);
 
@@ -609,7 +609,7 @@ function setup(shaders) {
     function buildRoofWindow(){
             multScale([4,0.5,4]);  
     
-            let color = [0.0,0.40,0.98,1.0]; 
+            let color = [104/255,200/255,230/255,1.0]; 
             
             setColor(color);
     
