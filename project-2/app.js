@@ -13,6 +13,17 @@ import { GUI } from "../libs/dat.gui.module.js";
 /** @type WebGLRenderingContext */
 let gl;
 
+// Transformation (only values that are independent)
+const X_BODY = 20;
+const Y_BODY = 10;
+const Z_BODY = 10;
+
+const X_HELIX_HOLDER = 2;
+const Y_HELIX_HOLDER = 5;
+const Z_HELIX_HOLDER = 2;
+
+
+// World Physics
 const WORLD_SCALE = 50; 
 const RADIUS = 30;
 const EARTH_GRAVITY = 9.8;
@@ -58,7 +69,7 @@ let front;              // World coordinates of a position directly in front of 
 let boxes = [];         // Boxes the helicopter drops
 
 let velocityDirection;   // Vector with the direction the helicopter is moving
-let linearVelocity;
+let linearVelocity = 0;
 
 
 function setup(shaders) {
@@ -129,9 +140,9 @@ function setup(shaders) {
 
     function buildMainBody() {
 
-        multScale([20, 10, 10]);
+        multScale([X_BODY, Y_BODY, Z_BODY]);
 
-        let color = [1.0,0.0,0.0,1.0];  //Red
+        let color = [236/255,41/255,57/255,1.0];  // Imperial Red 237, 41, 57
         setColor(color); 
 
         uploadModelView();
@@ -144,7 +155,7 @@ function setup(shaders) {
         pushMatrix();
             helicopterTail1();
         popMatrix();
-        multTranslation([12.5, 5, 0]); // 12.5 = xTail1/2, 10 = yTail1*2
+        multTranslation([X_BODY*5/8, Y_BODY/2, 0]); // 12.5 = xTail1/2, 5 = yTail1
         multRotationZ(70);  // tail2 rotation 
         pushMatrix();
             helicopterTail2();
@@ -223,7 +234,7 @@ function setup(shaders) {
 
     function helicopterTail1() {
 
-        multScale([25, 5, 5]);  // 25 = xBody+xBody/4, 5 = yBody/2, 5 = zBody/2
+        multScale([X_BODY*5/4, Y_BODY/2, Z_BODY/2]);  // 25 = xBody+xBody/4, 5 = yBody/2, 5 = zBody/2
 
         uploadModelView();
 
@@ -233,7 +244,7 @@ function setup(shaders) {
 
     function helicopterTail2() {
 
-        multScale([12.5, 5, 5]);  //12.5 = xTail1/2, 5 = yTail1, 5 = zTail1
+        multScale([X_BODY*5/8, Y_BODY/2, Z_BODY/2]);  //12.5 = xTail1/2, 5 = yTail1, 5 = zTail1
 
         uploadModelView();
 
@@ -243,22 +254,23 @@ function setup(shaders) {
 
     function buildTailRotorSystem() {
         pushMatrix();
-            multTranslation([0,5/4,0]); // 5/4 = yHelixHolder/4
+            multTranslation([0,Y_HELIX_HOLDER/4,0]); // 5/4 = yHelixHolder/4
             helixHolder();
         popMatrix();
         multRotationY(helixRotation);
         pushMatrix();
-            multTranslation([4, 2.5+5/8, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
+            multTranslation([X_HELIX_HOLDER*2, 2.5+5/8, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
             helix();
         popMatrix();
-        multTranslation([-4, 2.5+5/8, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
+        multRotationY(180);
+        multTranslation([X_HELIX_HOLDER*2, 2.5+5/8, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
         helix();
     }
 
     function helixHolder() {
-        multScale([2, 5, 2]);
+        multScale([X_HELIX_HOLDER, Y_HELIX_HOLDER, Z_HELIX_HOLDER]);
 
-        let color = [1.0,1.0,0.0,1.0]; // Yellow
+        let color = [240/255,240/255,237/255,1.0]; // Light white
         setColor(color); 
 
         uploadModelView();
@@ -269,7 +281,7 @@ function setup(shaders) {
     function helix() {
         multScale([12.5/2, 1, 2.5]);  //12.5 = xTail2/2, 1 = yTail2/5, 2.5 = zTail2/2
 
-        let color = [0.0,0.0,1.0,1.0]; // Blue
+        let color = [27/255,30/255,35/255,1.0]; // Black
         setColor(color);
 
         uploadModelView();
@@ -280,7 +292,7 @@ function setup(shaders) {
     function supportLeg() {
         multScale([1.5, 5, 1.5]);  // metricas do helixHolder
 
-        let color = [0.2,0.2,0.2,1.0];
+        let color = [246/255,190/255,0.0,1.0]; // Gold Yellow
         setColor(color);
 
         uploadModelView();
@@ -291,7 +303,7 @@ function setup(shaders) {
     function landingGear() {
         multScale([2.5, 20.0, 2.5]); // 2.5 = yTail1/2, 20 = xBody,  2.5 = zTail1/2
 
-        let color = [1.0,1.0,0.0,1.0]; // Yellow
+        let color = [240/255,240/255,237/255,1.0]; // Light white
         
         setColor(color);
 
