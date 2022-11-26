@@ -326,7 +326,7 @@ function setup(shaders) {
     }
 
     function Plane() {
-        multScale([150,1,150]); // 125 = 5/2* WORLD_SCALE
+        multScale([150,1,150]); // 150 = 3* WORLD_SCALE
 
         let color =[146/255,193/255, 46/255,1.0];   // 146,193,46 Green 1
         //let color = [68/255,109/255,68/255,1.0];   // 68,109,68 Green 2 
@@ -422,7 +422,7 @@ function setup(shaders) {
     function lake(){
         multScale([10,0.5,10]);  // 10 = WORLD_SCALE/5 , 0.5 para ter alguma grossura
     
-        multTranslation([0,0.7,0]);// tem que se elevar um bocadinho para aparecer. 0,04= 2*elevaçao do pavement
+        
         let color = [0.0,0.51,0.91,1.0]; 
         
         setColor(color);
@@ -436,7 +436,7 @@ function setup(shaders) {
     //ver isto
     
     function lakeLimit(){
-        multScale([13,6,13]);  // 10 = WORLD_SCALE/5
+        multScale([13,6,13]);  // 13=xLake + 3
     
         let color = [0.0,0.0,0.0,1.0]; // Color of the sun
         
@@ -846,7 +846,8 @@ function setup(shaders) {
             popMatrix();
         pushMatrix();
         multTranslation([0,0.3,0]);
-            pushMatrix();   
+            pushMatrix();
+            multTranslation([0,0.7,0]);   
                 lake();         //LAKE
             popMatrix();
             
