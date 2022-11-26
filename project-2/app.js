@@ -433,7 +433,7 @@ function setup(shaders) {
     //ver isto
     
     function lakeLimit(){
-        multScale([25,7.5,25]);  // 25 = WORLD_SCALE/2, 5 = WORLD_SCALE/5
+        multScale([25,7.5,25]);  // 25 = WORLD_SCALE/2, 
 
         let color = [0.57,0.56,0.56,1.0]; // 145, 142, 133 Stone
         
@@ -446,7 +446,7 @@ function setup(shaders) {
     }
 
     function circularPavement(){
-        multScale([50,1,50]);  // 25 = WORLD_SCALE/2, 0.5 para ter alguma grossura
+        multScale([50,1,50]);  // 50 = WORLD_SCALE, 1 para ter alguma grossura
     
         
         let color = [0.78,0.78,0.78,1.0]; 
@@ -460,7 +460,7 @@ function setup(shaders) {
     }
 
     function pavement(){
-        multScale([25,1,150]);  // 125 = plane size, 10=* WORLD_SCALE/5
+        multScale([25,1,150]);  // 150 = plane size, 25=xPLANE/6
 
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -473,7 +473,7 @@ function setup(shaders) {
     }
 
     function table(){
-        multScale([8,0.5,13]);  // 125 = plane size, 10=* WORLD_SCALE/5, 0.5 para ter alguma grossura
+        multScale([8,0.5,13]); //random values
 
         let color = [0.4,0.48,0.48,1.0]; 
         
@@ -485,7 +485,7 @@ function setup(shaders) {
     }
 
     function tableLeg(){
-        multScale([3,3,0.5]);
+        multScale([3,3,0.5]); //random values
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -497,7 +497,7 @@ function setup(shaders) {
     }
 
     function tableBench(){
-        multScale([3,0.5,11]);
+        multScale([3,0.5,11]); ////random values
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -852,7 +852,7 @@ function setup(shaders) {
             popMatrix();
 
             pushMatrix();
-                multTranslation([0,0.5,0]);     // 0.5 = yPlane/2
+                multTranslation([0,0.25,0]);     // 0.5 = yPlane/2
                 pavement();         // PAVEMENT
             popMatrix();
             
@@ -1729,7 +1729,7 @@ function setup(shaders) {
                 popMatrix();
             popMatrix();
 
-        popMatrix();
+        
 
 
         pushMatrix();
@@ -1744,7 +1744,7 @@ function setup(shaders) {
         popMatrix();
 
 
-            pushMatrix();
+        pushMatrix();
                 multTranslation([70,5/2,-60]); //5/2=halfTrunk height, outros valores sao random
                 pushMatrix();
                     treeTrunk2();
@@ -1753,10 +1753,10 @@ function setup(shaders) {
                 pushMatrix();
                     treeLeaves2();
                 popMatrix();
-            popMatrix();
+        popMatrix();
 
     
-            pushMatrix();
+        pushMatrix();
                 multTranslation([50,9/2,-65]); //valores random, exceto 9/2=halfTrunk height
                 pushMatrix();
                     pineTrunk();
@@ -1766,7 +1766,34 @@ function setup(shaders) {
                 pushMatrix();
                     pineLeaves();
                 popMatrix();
+        popMatrix();
+
+
+        pushMatrix();
+            multTranslation([65,9/2,-20]); //valores random, exceto 9/2=halfTrunk height
+            pushMatrix();
+                pineTrunk();
             popMatrix();
+            multTranslation([0,20/2+9/2-0.1,0]);
+            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+            pushMatrix();
+                pineLeaves();
+            popMatrix();
+        popMatrix();
+
+
+
+        pushMatrix();
+                multTranslation([-50,9/2,50]); //valores random, exceto 9/2=halfTrunk height
+                pushMatrix();
+                    pineTrunk();
+                popMatrix();
+                multTranslation([0,20/2+9/2-0.1,0]);
+                //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+                pushMatrix();
+                    pineLeaves();
+                popMatrix();
+        popMatrix();
 
 
 
