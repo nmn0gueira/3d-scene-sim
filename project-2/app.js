@@ -380,6 +380,7 @@ function setup(shaders) {
         
     }
 
+
     // Used only right before drawing the helicopter
     function mModelPoint() {
         const mModel = mult(inverse(mView), modelView());
@@ -444,6 +445,7 @@ function setup(shaders) {
     
     function lakeLimit(){
         multScale([25,7.5,25]); 
+        multScale([25,7.5,25]);  // 25 = WORLD_SCALE/2, 
 
         let color = [0.57,0.56,0.56,1.0]; // 145, 142, 133 Stone
         
@@ -457,6 +459,7 @@ function setup(shaders) {
 
     function circularPavement(){
         multScale([50,1,50]);
+        multScale([50,1,50]);  // 50 = WORLD_SCALE, 1 para ter alguma grossura
     
         
         let color = [0.78,0.78,0.78,1.0]; 
@@ -470,7 +473,7 @@ function setup(shaders) {
     }
 
     function pavement(){
-        multScale([25,1,150]);  // 125 = plane size, 10=* WORLD_SCALE/5
+        multScale([25,1,150]);  // 150 = plane size, 25=xPLANE/6
 
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -483,7 +486,7 @@ function setup(shaders) {
     }
 
     function table(){
-        multScale([8,0.5,13]);  // 125 = plane size, 10=* WORLD_SCALE/5, 0.5 para ter alguma grossura
+        multScale([8,0.5,13]); //random values
 
         let color = [0.4,0.48,0.48,1.0]; 
         
@@ -495,7 +498,7 @@ function setup(shaders) {
     }
 
     function tableLeg(){
-        multScale([3,3,0.5]);
+        multScale([3,3,0.5]); //random values
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -507,7 +510,7 @@ function setup(shaders) {
     }
 
     function tableBench(){
-        multScale([3,0.5,11]);
+        multScale([3,0.5,11]); //random values
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -519,7 +522,7 @@ function setup(shaders) {
     }
 
     function tableBenchLeg(){
-        multScale([0.5,1,6]);
+        multScale([0.5,1,6]);//random values
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -533,7 +536,6 @@ function setup(shaders) {
 
 
 //bench
-//O BENCH PROVAVELMENTE TEM QUE SE REDUZIR DE TAMANHO
     function benchLeg(){
         multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli, 
         //exceto 0.7 que e para ter alguma parte que fique dentro do plane
@@ -803,6 +805,33 @@ function setup(shaders) {
 
      }
 
+     function treeTrunk3(){
+        multScale([3,11,3]);  // random
+
+        let color = [0.52,0.24,0.01,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        CYLINDER.draw(gl, program, mode);
+
+     }
+
+     function treeLeaves3(){
+        multScale([10,7,10]);  // random
+
+        let color = [0.51,0.81,0.42,1.0]; 
+        
+        setColor(color);
+
+        uploadModelView();
+
+        SPHERE.draw(gl, program, mode);
+
+
+     }
+
      function pineTrunk(){
         multScale([3,9,3]);  // random
 
@@ -813,24 +842,44 @@ function setup(shaders) {
         uploadModelView();
 
         CYLINDER.draw(gl, program, mode);
-        
+
      }
 
-     function pineLeaves(){
-        multScale([10,20,10]);  // random
+     function treeLeaves3(){
+        multScale([10,7,10]);  // random
 
-        let color = [0.03,0.31,0.05,1.0]; 
+        let color = [0.51,0.81,0.42,1.0]; 
         
         setColor(color);
 
         uploadModelView();
 
-        PYRAMID.draw(gl, program, mode);
+        SPHERE.draw(gl, program, mode);
+
+
      }
 
-    function LakeAndPavement() {
-            multTranslation([0,1,0]);  // 1 = yPlane
+    
+
+
+    function World() {
+        //Sun (EXPERIMENTAL)
+        //pushMatrix();
+        //    multTranslation([50, 30,0]);    // 50 = WORLD_SCALE, 30 = 3WORLD_SCALE/5
+        //    Sun();
+        //popMatrix();
+
+        
+        //SURFACE  
+        pushMatrix();
             pushMatrix();
+                Plane();        //PLANE
+            popMatrix();
+
+            //enviroment 
+            //ps pode ser melhorado como foi feto com as outras primitivas
+            pushMatrix();  
+                multTranslation([0,1,0]);  // 1 = yPlane
                 lake();         //LAKE
             popMatrix();
             pushMatrix(); 
@@ -838,22 +887,206 @@ function setup(shaders) {
             popMatrix();  
             multTranslation([0,-0.75,0]);     // 0.75 = yTranslation in lake - yPlane/4 
             pushMatrix();
+                multTranslation([0,0.25,0]);     // 0.25 = yPlane/4
                 circularPavement(); //CIRCULAR PAVEMENT
             popMatrix();
-            pavement();         // PAVEMENT
-    }
 
-    function Building() {
-        multTranslation([0, 20 / 2, -64.4]); // 20/2=buildingBase height/2 para subir,52=150/2(half Plane)-125/6/2(half buildingbase width)
-        pushMatrix();
-            buildingBase();
-        popMatrix();
+            pushMatrix();
+                multTranslation([0,0.25,0]);     // 0.25 = yPlane/4
+                pavement();         // PAVEMENT
+            popMatrix();
+            
+            
+
+            
+
         
-        pushMatrix();
-        multTranslation([0, 10, 0]);
-        multRotationX(45);
-        baseRoof();
+
+            //benchs
+            pushMatrix();
+                multTranslation([25/2+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
+                //0.7 para ficar com parte da altura "enterrada no Plane", 50 valor random para ficar quase no limite do plane
+                pushMatrix();
+                    benchLeg();
+                popMatrix();
+
+                pushMatrix();
+                    multTranslation([0,0,-3]);  // para ficar a 3 de distancia
+                    benchLeg();
+                popMatrix();
+
+                pushMatrix();
+                    multTranslation([0,0.5/2,3/2-3]); //0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
+                    benchSeat();
+                popMatrix();
+                pushMatrix();
+                    multRotationZ(-90);
+                    multTranslation([-3/2, 3/2 + 0.5/2,-1.5]) //x = -3/2+0.5/2, y = width/2 + altura/2 do benchBackrest para posicionar + translaçao y do banco, z = translaçao z do banco
+                    benchBackrest();
+                popMatrix();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([-25/2-1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
+                //0.7 para ficar com parte da altura "enterrada no Plane", 50 valor random para ficar quase no limite do plane
+                pushMatrix();
+                    benchLeg();
+                popMatrix();
+
+                pushMatrix();
+                    multTranslation([0,0,-3]);  // para ficar a 3 de distancia
+                    benchLeg();
+                popMatrix();
+
+                pushMatrix();
+                    multTranslation([0,0.5/2,3/2-3]); //0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
+                    benchSeat();
+                popMatrix();
+                pushMatrix();
+                    multRotationZ(-90);
+                    multTranslation([-3/2, -3/2 - 0.5/2,-1.5]) //x = -3/2+0.5/2, y = width/2 + altura/2 do benchBackrest para posicionar + translaçao y do banco, z = translaçao z do banco
+                    benchBackrest();
+                popMatrix();
+            popMatrix();
+
+           
+            pushMatrix();
+            multTranslation([60,2.5,30]);
+            
+            pushMatrix();
+                table(); //Table1
+            popMatrix();
+            
+            pushMatrix();
+                multTranslation([0,-1.3,0]);
+                tableLeg();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([0,-1.3,0]);
+                multRotationY(90);
+                tableLeg();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([4,-1,0]);
+                tableBench();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([4,-1.5,0]);
+                tableBenchLeg();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([-4,-1,0]);
+                tableBench();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([-4,-1.5,0]);
+                tableBenchLeg();
+            popMatrix();
+
+            popMatrix();
+
+            
+            pushMatrix();
+            multTranslation([50,2.5,65]);
+            
+            pushMatrix();
+                table(); //Table2
+            popMatrix();
+            
+            pushMatrix();
+                multTranslation([0,-1.3,0]);
+                tableLeg();
+            popMatrix();
+
+            pushMatrix();
+               multTranslation([0,-1.3,0]);
+               multRotationY(90);
+               tableLeg();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([4,-1,0]);
+                tableBench();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([4,-1.5,0]);
+                tableBenchLeg();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([-4,-1,0]);
+                tableBench();
+            popMatrix();
+
+            pushMatrix();
+                multTranslation([-4,-1.5,0]);
+                tableBenchLeg();
+            popMatrix();
         popMatrix();
+
+
+
+        pushMatrix();
+            multTranslation([35,2.5,30]);
+            
+            pushMatrix();
+                table(); //Table3
+            popMatrix();
+            
+            pushMatrix();
+            multTranslation([0,-1.3,0]);
+                tableLeg();
+            popMatrix();
+
+            pushMatrix();
+               multTranslation([0,-1.3,0]);
+               multRotationY(90);
+               tableLeg();
+            popMatrix();
+
+            pushMatrix();
+            multTranslation([4,-1,0]);
+                tableBench();
+            popMatrix();
+
+            pushMatrix();
+            multTranslation([4,-1.5,0]);
+                tableBenchLeg();
+            popMatrix();
+
+            pushMatrix();
+            multTranslation([-4,-1,0]);
+                tableBench();
+            popMatrix();
+
+            pushMatrix();
+            multTranslation([-4,-1.5,0]);
+                tableBenchLeg();
+            popMatrix();
+        popMatrix();
+
+           
+           
+
+        //building
+            pushMatrix();
+                multTranslation([0, 20 / 2, -64.4]); // 20/2=buildingBase height/2 para subir,52=150/2(half Plane)-125/6/2(half buildingbase width)
+                pushMatrix();
+                   buildingBase();
+                popMatrix();
+
+                
+                pushMatrix();
+                   multTranslation([0,10,0]);
+                   multRotationX(45);
+                   baseRoof();
+                popMatrix();
 
         pushMatrix();
         multTranslation([75 / 2, 0, 125 / 12]);
@@ -1727,7 +1960,7 @@ function setup(shaders) {
                 popMatrix();
             popMatrix();
 
-        popMatrix();
+        
 
 
         pushMatrix();
@@ -1742,7 +1975,7 @@ function setup(shaders) {
         popMatrix();
 
 
-            pushMatrix();
+        pushMatrix();
                 multTranslation([70,5/2,-60]); //5/2=halfTrunk height, outros valores sao random
                 pushMatrix();
                     treeTrunk2();
@@ -1751,10 +1984,10 @@ function setup(shaders) {
                 pushMatrix();
                     treeLeaves2();
                 popMatrix();
-            popMatrix();
+        popMatrix();
 
     
-            pushMatrix();
+        pushMatrix();
                 multTranslation([50,9/2,-65]); //valores random, exceto 9/2=halfTrunk height
                 pushMatrix();
                     pineTrunk();
@@ -1764,7 +1997,34 @@ function setup(shaders) {
                 pushMatrix();
                     pineLeaves();
                 popMatrix();
+        popMatrix();
+
+
+        pushMatrix();
+            multTranslation([65,9/2,-20]); //valores random, exceto 9/2=halfTrunk height
+            pushMatrix();
+                pineTrunk();
             popMatrix();
+            multTranslation([0,20/2+9/2-0.1,0]);
+            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+            pushMatrix();
+                pineLeaves();
+            popMatrix();
+        popMatrix();
+
+
+
+        pushMatrix();
+                multTranslation([-50,9/2,50]); //valores random, exceto 9/2=halfTrunk height
+                pushMatrix();
+                    pineTrunk();
+                popMatrix();
+                multTranslation([0,20/2+9/2-0.1,0]);
+                //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+                pushMatrix();
+                    pineLeaves();
+                popMatrix();
+        popMatrix();
 
 
 
@@ -1778,6 +2038,48 @@ function setup(shaders) {
                     treeLeaves2();
                 popMatrix();
             popMatrix();
+
+
+
+        pushMatrix();
+            multTranslation([35,11/2,45]);
+             pushMatrix();
+             treeTrunk3();
+             popMatrix();
+
+             multTranslation([0,11/2,0]); //9/2=halfLeaves height
+             pushMatrix();
+                 treeLeaves3();
+             popMatrix();
+         popMatrix();
+
+
+         pushMatrix();
+            multTranslation([-50,11/2,-55]);
+             pushMatrix();
+             treeTrunk3();
+             popMatrix();
+
+             multTranslation([0,11/2,0]); //9/2=halfLeaves height
+             pushMatrix();
+                 treeLeaves3();
+             popMatrix();
+         popMatrix();
+
+
+
+         pushMatrix();
+            multTranslation([50,11/2,-30]);
+             pushMatrix();
+             treeTrunk3();
+             popMatrix();
+
+             multTranslation([0,11/2,0]); //9/2=halfLeaves height
+             pushMatrix();
+                 treeLeaves3();
+             popMatrix();
+         popMatrix();
+
 
         
 
