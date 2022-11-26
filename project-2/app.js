@@ -1724,7 +1724,7 @@ function setup(shaders) {
                 popMatrix();
             popMatrix();
 
-
+           //this is the tree that was used in the graph
             pushMatrix();
                 multTranslation([-40,5/2,-30]); //5/2=halfTrunk height, outros valores sao random
                 pushMatrix();
