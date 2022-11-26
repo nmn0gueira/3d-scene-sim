@@ -18,9 +18,13 @@ const X_BODY = 20;
 const Y_BODY = 10;
 const Z_BODY = 10;
 
-const X_HELIX_HOLDER = 2;
-const Y_HELIX_HOLDER = 5;
-const Z_HELIX_HOLDER = 2;
+const X_ROTOR = 2;
+const Y_ROTOR = 5;
+const Z_ROTOR = 2;
+
+const X_HELIX = 12.5/2;
+const Y_HELIX = 1;
+const Z_HELIX = 2.5;
 
 
 // World Physics
@@ -33,7 +37,7 @@ const MAX_INCLINATION = 30;
 const ANGULAR_ACCELERATION = 120;        // in approximately 1 second of moving the helicopter is at max speed
 const HELICOPTER_INCLINATION = 30;          // in approximately 1 second of moving the helicopter is at max inclination
 const MAX_HELIX_ANGULAR_VELOCITY = 360*2;
-const HELIX_ANGULAR_ACCELERATION = 360*2;   // in approximately 1 second the helixes rotate with max angular velocity
+const HELIX_ANGULAR_ACCELERATION = 360*2;   // in approximately 1 second the helices rotate with max angular velocity
 
 
 // Views
@@ -58,7 +62,7 @@ let keysPressed = [];
 let rotation = 0;                // Y axis rotation in relation to the center of the world
 let angularVelocity = 0;         // Rate of velocity at which the helicopter is rotating around the Y axis
 let helixRotation = 0;
-let helixAngularVelocity = 0;    // Only used for the helixes
+let helixAngularVelocity = 0;    // Only used for the helices
 
 let height = 0;
 
@@ -167,25 +171,25 @@ function setup(shaders) {
     function buildUpperRotor() {
         //Helix holder
         pushMatrix();
-            helixHolder();
+            rotor();
         popMatrix();
         multRotationY(helixRotation);
         //Helix 1
         pushMatrix();
-            multTranslation([12.5, 5 / 4, 0]); //10 = xBody/2, y = yHelixHolder/4
-            multScale([4,1,1]);                // four times larger in x than tail helixes
+            multTranslation([X_BODY*5/8, Y_ROTOR / 4, 0]); //10 = xBody/2, y = yRotor/4
+            multScale([4,1,1]);                // four times larger in x than tail helices
             helix();
         popMatrix();
         //Helix 2
         pushMatrix();
             multRotationY(120);    
-            multTranslation([12.5, 5 / 4, 0]);
+            multTranslation([X_BODY*5/8, Y_ROTOR / 4, 0]); 
             multScale([4,1,1]);
             helix();
         popMatrix();
         //Helix 3
         multRotationY(240);
-        multTranslation([12.5, 5 / 4, 0]);
+        multTranslation([X_BODY*5/8, Y_ROTOR / 4, 0]);
         multScale([4,1,1]);
         helix();
     }
@@ -222,12 +226,12 @@ function setup(shaders) {
 
         //Landing gear 1
         pushMatrix();
-            multTranslation([0,-7.5,5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 5 = (2zBody/5) + zHelixHolder/2
+            multTranslation([0,-7.5,5]); //-7.5 = -(yBody/2 + yRotor/2), 5 = (2zBody/5) + zRotor/2
             multRotationZ(90);
             landingGear();
         popMatrix();
         //Landing gear 2
-        multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yHelixHolder/2), 5 = (2zBody/5) + zHelixHolder/2
+        multTranslation([0,-7.5,-5]); //-7.5 = -(yBody/2 + yRotor/2), 5 = (2zBody/5) + zRotor/2
         multRotationZ(90);
         landingGear();
     }
@@ -254,21 +258,21 @@ function setup(shaders) {
 
     function buildTailRotorSystem() {
         pushMatrix();
-            multTranslation([0,Y_HELIX_HOLDER/4,0]); // 5/4 = yHelixHolder/4
-            helixHolder();
+            multTranslation([0,Y_ROTOR/4,0]); // 5/4 = yRotor/4
+            rotor();
         popMatrix();
         multRotationY(helixRotation);
         pushMatrix();
-            multTranslation([X_HELIX_HOLDER*2, 2.5+5/8, 0]);  //4 = xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
+            multTranslation([X_ROTOR*2, Y_ROTOR/2+Y_ROTOR/8, 0]);  //4 = xRotor*2, 2.5 = yRotor/2 + y translation on rotor/2
             helix();
         popMatrix();
         multRotationY(180);
-        multTranslation([X_HELIX_HOLDER*2, 2.5+5/8, 0]); //4 = -xHelixHolder*2, 2.5 = yHelixHolder/2 + y translation on helixHolder/2
+        multTranslation([X_ROTOR*2, Y_ROTOR/2+Y_ROTOR/8, 0]); //4 = -xRotor*2, 2.5 = yRotor/2 + y translation on rotor/2
         helix();
     }
 
-    function helixHolder() {
-        multScale([X_HELIX_HOLDER, Y_HELIX_HOLDER, Z_HELIX_HOLDER]);
+    function rotor() {
+        multScale([X_ROTOR, Y_ROTOR, Z_ROTOR]);
 
         let color = [240/255,240/255,237/255,1.0]; // Light white
         setColor(color); 
@@ -279,7 +283,7 @@ function setup(shaders) {
     }
 
     function helix() {
-        multScale([12.5/2, 1, 2.5]);  //12.5 = xTail2/2, 1 = yTail2/5, 2.5 = zTail2/2
+        multScale([X_HELIX, Y_HELIX, Z_HELIX]);  //12.5 = xTail2/2, 1 = yTail2/5, 2.5 = zTail2/2
 
         let color = [27/255,30/255,35/255,1.0]; // Black
         setColor(color);
@@ -290,7 +294,7 @@ function setup(shaders) {
      }
 
     function supportLeg() {
-        multScale([1.5, 5, 1.5]);  // metricas do helixHolder
+        multScale([1.5, 5, 1.5]);
 
         let color = [246/255,190/255,0.0,1.0]; // Gold Yellow
         setColor(color);
@@ -317,12 +321,12 @@ function setup(shaders) {
             buildMainBody();
         popMatrix();
         pushMatrix();
-            multTranslation([15, 2, 0]); // 15 = 3xBody/4, 2 = yBody/5
+            multTranslation([X_BODY*3/4, Y_BODY/5, 0]); // 15 = 3xBody/4, 2 = yBody/5
             buildTail();
         popMatrix();
 
         pushMatrix();
-            multTranslation([0, 5, 0]); // 5 = yBody/2 
+            multTranslation([0, Y_BODY/2, 0]); // 5 = yBody/2 
             buildUpperRotor();
         popMatrix();
 
@@ -1858,7 +1862,7 @@ function setup(shaders) {
                         mode = gl.TRIANGLES;
                         break;
                     case 'ArrowUp':
-                        // The helicopter only takes off if the helixes are rotating at maximum speed
+                        // The helicopter only takes off if the helices are rotating at maximum speed
                         if (height < MAX_HEIGHT && helixAngularVelocity == MAX_HELIX_ANGULAR_VELOCITY) {
                             height += 0.25;
                         }
@@ -1921,7 +1925,7 @@ function setup(shaders) {
                         //If the next value is below the min value set at min value
                         inclination = inclination - dt*HELICOPTER_INCLINATION < 0 ? 0 : inclination - dt*HELICOPTER_INCLINATION;
                 }
-                // When the helicopter is on the ground and ArrowUp is not being pressed the helixes will progressively stop rotating
+                // When the helicopter is on the ground and ArrowUp is not being pressed the helices will progressively stop rotating
                 if (k == 'ArrowUp' && height == 0 && helixAngularVelocity > 0) {
                     //If the next value is below the min value set at min value
                     helixAngularVelocity = helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION < 0 ? 0 : helixAngularVelocity - dt*HELIX_ANGULAR_ACCELERATION;
