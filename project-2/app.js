@@ -415,12 +415,6 @@ function setup(shaders) {
 
 
 
-
-
-
-
-
-
     //enviroment
     // ps para as cores usei um site, https://antongerdelan.net/colour/
     function lake(){
@@ -479,7 +473,7 @@ function setup(shaders) {
     }
 
     function table(){
-        multScale([6,0.5,10]);  // 125 = plane size, 10=* WORLD_SCALE/5, 0.5 para ter alguma grossura
+        multScale([8,0.5,13]);  // 125 = plane size, 10=* WORLD_SCALE/5, 0.5 para ter alguma grossura
 
         let color = [0.4,0.48,0.48,1.0]; 
         
@@ -491,7 +485,7 @@ function setup(shaders) {
     }
 
     function tableLeg(){
-        multScale([2.5,2.5,0.5]);
+        multScale([3,3,0.5]);
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -503,7 +497,7 @@ function setup(shaders) {
     }
 
     function tableBench(){
-        multScale([2.5,0.5,10]);
+        multScale([3,0.5,11]);
         
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -853,7 +847,7 @@ function setup(shaders) {
             popMatrix();
             
             pushMatrix();
-                multTranslation([0,0.5,0]);     // 0.5 = yPlane/2
+                multTranslation([0,0.25,0]);     // 0.5 = yPlane/2
                 circularPavement(); //CIRCULAR PAVEMENT
             popMatrix();
 
@@ -870,7 +864,7 @@ function setup(shaders) {
 
             //bench (REVER ISTO MAIS TARDE)
             pushMatrix();
-                multTranslation([5+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
+                multTranslation([25/2+1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
                 //0.7 para ficar com parte da altura "enterrada no Plane", 50 valor random para ficar quase no limite do plane
                 pushMatrix();
                     benchLeg();
@@ -893,7 +887,7 @@ function setup(shaders) {
             popMatrix();
 
             pushMatrix();
-                multTranslation([-5-1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
+                multTranslation([-25/2-1,0.7,50]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
                 //0.7 para ficar com parte da altura "enterrada no Plane", 50 valor random para ficar quase no limite do plane
                 pushMatrix();
                     benchLeg();
@@ -924,33 +918,33 @@ function setup(shaders) {
             popMatrix();
             
             pushMatrix();
-            multTranslation([0,-1.25,0]);
+            multTranslation([0,-1.3,0]);
                 tableLeg();
             popMatrix();
 
             pushMatrix();
-               multTranslation([0,-1.25,0]);
+               multTranslation([0,-1.3,0]);
                multRotationY(90);
                tableLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([3,-1,0]);
+            multTranslation([4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([3,-1.5,0]);
+            multTranslation([4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-3,-1,0]);
+            multTranslation([-4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-3,-1.5,0]);
+            multTranslation([-4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
@@ -965,33 +959,33 @@ function setup(shaders) {
             popMatrix();
             
             pushMatrix();
-            multTranslation([0,-1.25,0]);
+            multTranslation([0,-1.3,0]);
                 tableLeg();
             popMatrix();
 
             pushMatrix();
-               multTranslation([0,-1.25,0]);
+               multTranslation([0,-1.3,0]);
                multRotationY(90);
                tableLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([3,-1,0]);
+            multTranslation([4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([3,-1.5,0]);
+            multTranslation([4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-3,-1,0]);
+            multTranslation([-4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-3,-1.5,0]);
+            multTranslation([-4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
             popMatrix();
@@ -1006,33 +1000,33 @@ function setup(shaders) {
             popMatrix();
             
             pushMatrix();
-            multTranslation([0,-1.25,0]);
+            multTranslation([0,-1.3,0]);
                 tableLeg();
             popMatrix();
 
             pushMatrix();
-               multTranslation([0,-1.25,0]);
+               multTranslation([0,-1.3,0]);
                multRotationY(90);
                tableLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([3,-1,0]);
+            multTranslation([4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([3,-1.5,0]);
+            multTranslation([4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-3,-1,0]);
+            multTranslation([-4,-1,0]);
                 tableBench();
             popMatrix();
 
             pushMatrix();
-            multTranslation([-3,-1.5,0]);
+            multTranslation([-4,-1.5,0]);
                 tableBenchLeg();
             popMatrix();
 
@@ -1747,6 +1741,7 @@ function setup(shaders) {
             pushMatrix();
                 treeLeaves1();
             popMatrix();
+        popMatrix();
 
 
             pushMatrix();
@@ -1786,7 +1781,7 @@ function setup(shaders) {
                 popMatrix();
             popMatrix();
 
-        popMatrix();
+        
 
 
 
