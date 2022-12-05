@@ -410,9 +410,7 @@ function setup(shaders) {
 
                         console.log(Y_BOX/2+Y_PLANE/2);
                         
-                        /* IF YOU DECIDE TO SET timeFactor TO 1 TO NOTICE THE VELOCITY IN x AND z
-                        *  USE EARTH_GRAVITY/1000 FOR EXAMPLE
-                        */
+                     
                         b.velocity[1] = b.velocity[1] + EARTH_GRAVITY*timeFactor;
                     }
                     box();
