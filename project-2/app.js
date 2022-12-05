@@ -15,10 +15,9 @@ let gl;
 
 // Transformation (only values that are independent)
 // Helicopter
-const X_SCALE = 0.4;
-const Y_SCALE = 0.4;
-const Z_SCALE = 0.4;
-
+const X_HELICOPTER_SCALE = 0.4;
+const Y_HELICOPTER_SCALE = 0.4;
+const Z_HELICOPTER_SCALE = 0.4;
 
 const X_BODY = 20;
 const Y_BODY = 10;
@@ -290,6 +289,7 @@ function setup(shaders) {
         popMatrix();
         multRotationY(180);
         multTranslation([X_ROTOR*2, Y_ROTOR/2+Y_ROTOR/8, 0]);
+        buildHelix();
     }
 
     function buildRotor() {
@@ -533,8 +533,7 @@ function setup(shaders) {
 
 //bench
     function benchLeg(){
-        multScale([2,0.7,0.5]);  //tamanhos random, pequenos para serem menor que o heli, 
-        //exceto 0.7 que e para ter alguma parte que fique dentro do plane
+        multScale([2,0.7,0.5]);
 
         let color = [0.0,0.0,0.0,1.0]; 
         
@@ -549,9 +548,8 @@ function setup(shaders) {
     
 
     function benchSeat(){
-        multScale([3,0.5,6]);  //tamanhos random, pequenos para serem menor que o heli,  
+        multScale([3,0.5,6]);
 
-        //tem que se elevar um pouco para aparecer
         let color = [0.24,0.05,0.08,1.0]; 
         
         setColor(color);
@@ -563,7 +561,7 @@ function setup(shaders) {
 
 
     function benchBackrest(){
-        multScale([3,0.5,6]); //mesmos tamanhos que o benchSeat
+        multScale([3,0.5,6]);
 
         let color = [0.39,0.05,0.08,1.0]; 
         
@@ -577,7 +575,7 @@ function setup(shaders) {
     //building
 
     function buildingBase(){
-        multScale([75,20,125/6]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
+        multScale([75,20,125/6]);
 
         let color = [0.98,0.68,0.38,1.0]; 
         
@@ -641,7 +639,7 @@ function setup(shaders) {
     }
 
     function baseRoof(){
-        multScale([75-0.1,14.7,14.7]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
+        multScale([75-0.1,14.7,14.7]);
 
         let color = [0.94,0.21,0.03,1.0]; 
         
@@ -655,7 +653,7 @@ function setup(shaders) {
 
     function corner(){
 
-        multScale([2,20,2]);  //75=~ 2*125/3, 20 valor escolhido para altura, 125/6= para ter 1/6 do PLane
+        multScale([2,20,2]);
 
         let color = [0.78,0.78,0.78,1.0]; 
         
@@ -669,7 +667,7 @@ function setup(shaders) {
     
     function buildCenterBuilding(){
 
-        multScale([125/5,20,25]);  // 125/5= para ter 1/5 do tamanho do PLANE, 20 valor escolhido para altura  , 25= WORLD_SCALE/2
+        multScale([125/5,20,25]); 
 
         let color = [0.98,0.68,0.38,1.0]; 
         
@@ -682,7 +680,7 @@ function setup(shaders) {
     }
 
     function buildCenterRoof(){
-        multScale([17.7,17.7,125/5-0.2]); // 40=building center height
+        multScale([17.7,17.7,125/5-0.2]);
 
         let color = [0.94,0.21,0.03,1.0]; 
         
@@ -696,7 +694,7 @@ function setup(shaders) {
 
     function buildEntrance(){
         
-        multScale([25-0.2,20,5]);  //25=WORLD_SCALE, 20=ybuildingCenter ,5= Building center width/5
+        multScale([25-0.2,20,5]);
 
         let color = [0.93,0.87,0.81,1.0]; 
         
@@ -708,7 +706,7 @@ function setup(shaders) {
     }
 
     function buildingDoors(){
-        multScale([12.5/3,12.5/3,1]);  // 12.5/3 para ter 1/3 do comprimento e altura da entrance , 1 para ter alguma grossura
+        multScale([12.5/3,12.5/3,1]);
 
         let color = [0.63,0.36,0.10,1.0]; 
         
@@ -720,7 +718,7 @@ function setup(shaders) {
 
     }
     function buildingPilar(){
-        multScale([3,20,3]);  // 40=building center height
+        multScale([3,20,3]);
 
         let color = [0.93,0.87,0.81,1.0]; 
         
@@ -733,7 +731,7 @@ function setup(shaders) {
     }
 
     function entranceRoof(){
-        multScale([25 + 3,3,10]); // 40=building center height
+        multScale([25 + 3,3,10]);
 
         let color = [0.77,0.77,0.77,1.0]; 
         
@@ -878,37 +876,37 @@ function setup(shaders) {
         popMatrix();
 
         pushMatrix();
-            multTranslation([0,0,-3]);  // para ficar a 3 de distancia
+            multTranslation([0,0,-3]);
             benchLeg();
         popMatrix();
 
         pushMatrix();
-            multTranslation([0,0.5/2,3/2-3]); //0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
+            multTranslation([0,0.5/2,3/2-3]); 
             benchSeat();
         popMatrix();
         pushMatrix();
             multRotationZ(-90);
-            multTranslation([-3/2, 3/2 + 0.5/2,-1.5]) //x = -3/2+0.5/2, y = width/2 + altura/2 do benchBackrest para posicionar + translaçao y do banco, z = translaçao z do banco
+            multTranslation([-3/2, 3/2 + 0.5/2,-1.5]);
             benchBackrest();
         popMatrix();
 
         //Bench 2
-        multTranslation([-26-1,0,0]); //6= 5(circularpavement WIDTH/2) + 1(benchleg LENGTH/2) 
+        multTranslation([-26-1,0,0]);
         pushMatrix();
             benchLeg();
         popMatrix();
 
         pushMatrix();
-            multTranslation([0,0,-3]);  // para ficar a 3 de distancia
+            multTranslation([0,0,-3]);
             benchLeg();
         popMatrix();
 
         pushMatrix();
-            multTranslation([0,0.5/2,3/2-3]); //0.5/2 subir metade da altura do benchseat, 3/2= distancia/2
+            multTranslation([0,0.5/2,3/2-3]); 
             benchSeat();
         popMatrix();
             multRotationZ(-90);
-            multTranslation([-3/2, -3/2 - 0.5/2,-1.5]) //x = -3/2+0.5/2, y = width/2 + altura/2 do benchBackrest para posicionar + translaçao y do banco, z = translaçao z do banco
+            multTranslation([-3/2, -3/2 - 0.5/2,-1.5]);
             benchBackrest();
     }
 
@@ -1579,7 +1577,7 @@ function setup(shaders) {
     }
 
     function CenterBuilding() {
-        multTranslation([0, 20 / 2, -62.4]); // 40/2=buildingBase height/2 para subir,50=125/2(half Plane)-25/2(half buildingCenter width)
+        multTranslation([0, 20 / 2, -62.4]);
         pushMatrix();
             buildCenterBuilding();
         popMatrix(); 
@@ -1681,43 +1679,43 @@ function setup(shaders) {
 
     function PineTrees() {
         pushMatrix();
-            multTranslation([-60,9/2,0]); //valores random, exceto 9/2=halfTrunk height
+            multTranslation([-60,9/2,0]); 
             pushMatrix();
                 pineTrunk();
             popMatrix();
             multTranslation([0,20/2+9/2-0.1,0]);
-            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1
             pineLeaves();
         popMatrix();
 
         pushMatrix();
-            multTranslation([50,9/2,-65]); //valores random, exceto 9/2=halfTrunk height
+            multTranslation([50,9/2,-65]); 
             pushMatrix();
                 pineTrunk();
             popMatrix();
             multTranslation([0,20/2+9/2-0.1,0]);
-            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1
             pineLeaves();
         popMatrix();
 
         pushMatrix();
-            multTranslation([65,9/2,-20]); //valores random, exceto 9/2=halfTrunk height
+            multTranslation([65,9/2,-20]);
             pushMatrix();
                 pineTrunk();
             popMatrix();
             multTranslation([0,20/2+9/2-0.1,0]);
-            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+            //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1
             pineLeaves();
         popMatrix();
 
 
 
-        multTranslation([-50,9/2,50]); //valores random, exceto 9/2=halfTrunk height
+        multTranslation([-50,9/2,50]);
         pushMatrix();
             pineTrunk();
         popMatrix();
         multTranslation([0,20/2+9/2-0.1,0]);
-        //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1(para o tronco ficar um pouco dentro das folhas)
+        //20/2(half leavesHeight) + 9/2(HalfTrunk height) -0.1
         pineLeaves();
     }
 
@@ -1729,7 +1727,7 @@ function setup(shaders) {
         popMatrix();
 
         pushMatrix();
-            multTranslation([50,5/2,25]); // 5/2=halfTrunk height, outros valores sao random
+            multTranslation([50,5/2,25]);
             pushMatrix();
                 treeTrunk1();
             popMatrix();
@@ -1739,17 +1737,17 @@ function setup(shaders) {
 
            //this is the tree that was used in the graph
         pushMatrix();
-            multTranslation([-40,5/2,-30]); //5/2=halfTrunk height, outros valores sao random
+            multTranslation([-40,5/2,-30]); 
             pushMatrix();
                 treeTrunk2();
             popMatrix();
-            multTranslation([0,7/2,0]); //7/2=halfLeaves height
+            multTranslation([0,7/2,0]); 
             treeLeaves2();
         popMatrix();
 
         
         pushMatrix();
-            multTranslation([-30,5/2,30]); // 5/2=halfTrunk height, outros valores sao random
+            multTranslation([-30,5/2,30]); 
             pushMatrix();
                 treeTrunk1();
             popMatrix();
@@ -1759,8 +1757,8 @@ function setup(shaders) {
 
 
         pushMatrix();
-            multTranslation([70,5/2,-60]); //5/2=halfTrunk height, outros valores sao random
-            pushMatrix();
+        multTranslation([70,5/2,-60]); //5/2=halfTrunk height
+        pushMatrix();
                 treeTrunk2();
             popMatrix();
             multTranslation([0,7/2,0]); //7/2=halfLeaves height
@@ -1769,7 +1767,7 @@ function setup(shaders) {
 
 
         pushMatrix();
-            multTranslation([-70,5/2,-60]); //5/2=halfTrunk height, outros valores sao random
+            multTranslation([-70,5/2,-60]); //5/2=halfTrunk height
             pushMatrix();
                 treeTrunk2();
             popMatrix();
@@ -1846,11 +1844,11 @@ function setup(shaders) {
             multRotationY(rotation); // rotation around the Y axis
             multTranslation([RADIUS,0.0,0.0]); // helicopter translation to rotate Y axis with 30 radius
             //                 Y_SCALEY_BODY*3/4                             0.5                          3                        rotateZ     0.5             
-            multTranslation([0,Y_PLANE/2+Y_SCALE*(Y_BODY*3/4+X_LANDING_GEAR/2)+height,0.0]); //4 = ((yPlane/2) + (0.4*y translation in landing gear) + (0.4*xLandingGear/2)) 
+            multTranslation([0,Y_PLANE/2+Y_HELICOPTER_SCALE*(Y_BODY*3/4+X_LANDING_GEAR/2)+height,0.0]); //4 = ((yPlane/2) + (0.4*y translation in landing gear) + (0.4*xLandingGear/2)) 
             multRotationY(-90);
             multRotationZ(inclination);
             updatePositionsAndVelocity();          // Updates current position
-            multScale([X_SCALE,Y_SCALE,Z_SCALE]);
+            multScale([X_HELICOPTER_SCALE,Y_HELICOPTER_SCALE,Z_HELICOPTER_SCALE]);
             Helicopter();
             
         popMatrix();
