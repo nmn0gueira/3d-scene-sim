@@ -33,4 +33,4 @@ This project is a 3D simulation of a helicopter that allows for vertical and cir
   - You can control the projection angles θ and γ via **sliders**.
 
 ## About
-Developed as part of the Computer Graphics and Interfaces (2022/23) course at FCT NOVA.
+This project was developed as part of the Computer Graphics and Interfaces (2022/2023) course at FCT-UNL.
