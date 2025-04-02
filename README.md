@@ -1,6 +1,6 @@
 # 3D Hierarchical Scene Modeling
 
-This project is a 3D simulation of a helicopter that allows for vertical and circular movement, with some object interaction (e.g., dropping cargo), and camera control. The helicopter is modeled using basic 3D primitives (cylinders, cubes, and spheres), and the scene is rendered using Three.js.
+This project is a 3D simulation of a helicopter that allows for vertical and circular movement, with some object interaction (e.g., dropping cargo), and camera control. The helicopter is modeled using basic 3D primitives (cylinders, cubes, and spheres).
 
 ## How to Run
 1. **Clone the repository** to your local machine.
